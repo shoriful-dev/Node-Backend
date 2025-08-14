@@ -38,7 +38,6 @@ exports.Registration = asyncHandler(async (req, res) => {
       throw new customError(500, 'Email Send Faild');
     }
   } else {
-    
   }
 
   await user.save();
