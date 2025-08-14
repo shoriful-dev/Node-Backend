@@ -22,16 +22,24 @@ const userValidationSchema = Joi.object({
       'string.pattern.base':
         'Password must be at least 8 characters long, include one uppercase letter, one lowercase letter, one number, and one special character',
     }),
-}, {
-  allowUnknow: true,
-});
 
-exports.validateUser = async (req) => {
+  phoneNumber: Joi.string()
+    .trim()
+    .pattern(/^(?:\+880|880|0)1[3-9]\d{8}$/)
+    .messages({
+      'string.empty': 'Phone number is required',
+      'any.required': 'Phone number field cannot be empty',
+      'string.pattern.base':
+        'Invalid Bangladeshi phone number format. Use +8801XXXXXXXXX, 8801XXXXXXXXX, or 01XXXXXXXXX',
+    }),
+}).unknown(true);
+
+exports.validateUser = async req => {
   try {
     const value = await userValidationSchema.validateAsync(req.body);
     return value;
   } catch (error) {
-    console.log('error from validateuser method', error)
+    console.log('error from validateuser method', error.details);
     throw new customError(401, error.details[0].message);
   }
-}
+};
