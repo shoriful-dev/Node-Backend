@@ -47,7 +47,7 @@ your time expires on ${new Date(expireTime).getTimezoneOffset()}
 Verify your account using this link: ${verifyEmailLink}
 Need help? Contact us anytime.`;
       const sms = await sendSms(user.phoneNumber, smsBody);
-      // console.log(sms);
+      console.log(sms);
       // if (sms?.data?.response_code !== 202) {
       //   throw new customError(500, sms?.error_message);
       // }
