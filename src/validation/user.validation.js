@@ -4,12 +4,10 @@ const { customError } = require('../../utils/customError');
 const userValidationSchema = Joi.object({
   email: Joi.string()
     .trim()
-    .required()
     .pattern(/^[\w.-]+@[\w-]+\.[a-zA-Z]{2,4}$/)
     .messages({
       'string.empty': 'Email is required',
       'string.pattern.base': 'Please enter a valid email address',
-      'any.required': 'Email field cannot be empty',
     }),
 
   password: Joi.string()
@@ -39,7 +37,7 @@ exports.validateUser = async req => {
     const value = await userValidationSchema.validateAsync(req.body);
     return value;
   } catch (error) {
-    console.log('error from validateuser method', error.details);
+    console.log('error from validateuser method', error);
     throw new customError(401, error.details[0].message);
   }
 };

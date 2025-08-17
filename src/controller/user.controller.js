@@ -1,10 +1,11 @@
 const { asyncHandler } = require('../../utils/asyncHandler');
-const {apiResponse} = require('../../utils/apiResponse');
+const { apiResponse } = require('../../utils/apiResponse');
 const { customError } = require('../../utils/customError');
 const { Otp, emailSend } = require('../helpers/nodemailer');
 const userModel = require('../models/user.model');
 const { registrationTemplate } = require('../template/emailtemplate');
 const { validateUser } = require('../validation/user.validation');
+const { sendSms } = require('../helpers/sms');
 
 exports.Registration = asyncHandler(async (req, res) => {
   const value = await validateUser(req);
@@ -37,6 +38,19 @@ exports.Registration = asyncHandler(async (req, res) => {
     const rejult = await emailSend(user.email, 'Verify Email 🥷🏼', templete);
     if (!rejult) {
       throw new customError(500, 'Email Send Faild');
+    } else {
+      const verifyEmailLink = `www.fontend.com/verify-account/${user.phoneNumber}`;
+      const smsBody = `✅ Welcome to Node commerce, ${user.name}!
+Your registration is complete.
+your otp is : ${otp}
+your time expires on ${new Date(expireTime).getTimezoneOffset()}
+Verify your account using this link: ${verifyEmailLink}
+Need help? Contact us anytime.`;
+      const sms = await sendSms(user.phoneNumber, smsBody);
+      // console.log(sms);
+      // if (sms?.data?.response_code !== 202) {
+      //   throw new customError(500, sms?.error_message);
+      // }
     }
   }
 
