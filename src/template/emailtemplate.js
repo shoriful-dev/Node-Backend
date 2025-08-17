@@ -1,102 +1,82 @@
-exports.registrationTemplate = () => {
+exports.registrationTemplate = (
+  name,
+  email,
+  otp,
+  expireTime,
+  verifyEmailLink
+) => {
   return `
-  <html lang="en">
+
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Verify Your Email</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f5f7fb;
-        margin: 0;
-        padding: 0;
-      }
-      .container {
-        max-width: 600px;
-        margin: 40px auto;
-        background: #ffffff;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      }
-      .header {
-        background: #2563eb;
-        padding: 20px;
-        text-align: center;
-        color: white;
-        font-size: 20px;
-        font-weight: bold;
-      }
-      .content {
-        padding: 24px 28px;
-        color: #374151;
-      }
-      .content h2 {
-        margin-top: 0;
-        font-size: 22px;
-        color: #111827;
-      }
-      .info {
-        margin: 12px 0;
-        font-size: 15px;
-        color: #555;
-      }
-      .otp {
-        font-family: monospace;
-        font-size: 20px;
-        font-weight: bold;
-        background: #f3f4f6;
-        padding: 10px 16px;
-        border-radius: 8px;
-        display: inline-block;
-        letter-spacing: 2px;
-      }
-      .btn {
-        display: inline-block;
-        margin-top: 20px;
-        background: #2563eb;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 6px;
-        text-decoration: none;
-        font-weight: bold;
-      }
-      .btn:hover {
-        background: #1e4bb8;
-      }
-      .footer {
-        padding: 16px;
-        text-align: center;
-        font-size: 12px;
-        color: #888;
-      }
-    </style>
   </head>
-  <body>
-    <div class="container">
-      <div class="header">Verify Your Email</div>
-      <div class="content">
-        <h2>Hello, ${name}</h2>
-        <p class="info">We received a request to create an account with the email:</p>
-        <p><strong>${email}</strong></p>
-        
-        <p class="info">Please verify your email by entering the OTP below or clicking the button:</p>
-        <div class="otp">${otp}</div>
+  <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #e9f7f6;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #e9f7f6; padding: 40px 0;">
+      <tr>
+        <td align="center">
+          <table width="100%" style="max-width: 600px;" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+            <!-- Header -->
+            <tr>
+              <td align="center" style="padding: 40px 30px 20px 30px;">
+                <h2 style="margin: 0; font-size: 22px; color: #333;">Hi ${name},</h2>
+                <p style="font-size: 16px; color: #555;">Please verify that your email address is <strong>${email}</strong>, and that you entered it when signing up.</p>
+              </td>
+            </tr>
 
-        <p class="info">This code will expire on <strong>${new Date(
-          formattedExpire
-        )}</strong>.</p>
+            <!-- OTP Info -->
+            <tr>
+              <td align="center" style="padding: 0 30px 20px 30px;">
+                <p style="font-size: 16px; color: #555;">Your OTP is:</p>
+                <div style="font-size: 24px; font-weight: bold; color: #00d084; margin: 10px 0;">${otp}</div>
+                <p style="font-size: 14px; color: #999;">This OTP will expire in ${new Date(
+                  expireTime
+                )} minutes.</p>
+              </td>
+            </tr>
 
-        <a class="btn" href="${verifyEmailLink}" target="_blank">Verify Email</a>
-        
-        <p class="info" style="margin-top:20px;">If you didn’t request this, please ignore this email.</p>
-      </div>
-      <div class="footer">
-        &copy; ${new Date().getFullYear()} Your Company. All rights reserved.
-      </div>
-    </div>
+            <!-- Verify Button -->
+            <tr>
+              <td align="center" style="padding: 0 30px 30px 30px;">
+                <a href="${verifyEmailLink}" target="_blank" style="display: inline-block; padding: 14px 28px; background-color: #00d084; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 16px;">
+                  Verify email
+                </a>
+                <p style="font-size: 14px; color: #777; margin-top: 15px;">
+                  Other users may see your organization, but your email stays private.
+                </p>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td align="center" style="padding: 20px 30px; background-color: #f7fdfd;">
+                <p style="margin: 0; font-size: 14px; color: #555;">Happy registering,</p>
+                <p style="margin: 0; font-size: 14px; color: #555;"><strong>The YourAppName Team</strong></p>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Bottom Illustration Section -->
+          <table width="600" cellpadding="0" cellspacing="0" style="margin-top: 30px;">
+            <tr>
+              <td align="center" style="padding: 20px 0;">
+                <img src="https://i.imgur.com/FDwTYEQ.png" alt="illustration" width="100%" style="max-width: 600px; display: block; border: 0;" />
+              </td>
+            </tr>
+            <tr>
+              <td align="center" style="font-size: 14px; color: #999;">
+                <a href="#" style="color: #00b894; margin: 0 10px;">About us</a> |
+                <a href="#" style="color: #00b894; margin: 0 10px;">Contact</a> |
+                <a href="#" style="color: #00b894; margin: 0 10px;">Facebook</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </body>
-  </html>
+</html>
 `;
-}
+};

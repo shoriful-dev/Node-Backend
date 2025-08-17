@@ -1,4 +1,5 @@
 const { asyncHandler } = require('../../utils/asyncHandler');
+const {apiResponse} = require('../../utils/apiResponse');
 const { customError } = require('../../utils/customError');
 const { Otp, emailSend } = require('../helpers/nodemailer');
 const userModel = require('../models/user.model');
@@ -37,7 +38,6 @@ exports.Registration = asyncHandler(async (req, res) => {
     if (!rejult) {
       throw new customError(500, 'Email Send Faild');
     }
-  } else {
   }
 
   await user.save();
