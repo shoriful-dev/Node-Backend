@@ -156,4 +156,24 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
     );
 });
 
+// reset password
+exports.resetPassowrd = asyncHandler(async (req, res) => {
+  const { email, newPassword, confrimPassword } = req.body;
+  let pattern =
+    /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|    /?]).{8,}$/;
+  if (!newPassword && !confrimPassword)
+    throw new customError(401, "new pass or custonm pass miss");
+  if (!pattern.test(newPassword))
+    throw new customError(
+      401,
+      "পাসওয়ার্ডে অন্তত ১টি বড় হাতের অক্ষর, ১টি নাম্বার এবং ১টি স্পেশাল ক্যারেক্টার থাকতে হবে এবং সর্বনিম্ন ৮ অক্ষরের হতে হবে।"
+    );
 
+  if (newPassword !== confrimPassword)
+    throw new customError(401, "password Not Matched !!");
+  const user = await userModel.findOne({ email });
+  if (!user) throw new customError(401, "user is not found");
+  user.password = newPassword;
+  await user.save();
+  return res.status(301).redirect("www.fron.com/login");
+});

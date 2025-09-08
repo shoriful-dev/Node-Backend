@@ -6,5 +6,6 @@ _.route('/registration').post(userController.Registration);
 _.route('/verify-account').post(userController.verifyUser);
 _.route('/resend-otp').post(userController.resendOtp);
 _.route('/forgot-password').post(userController.forgotPassword);
+_.route('/reset-password').post(userController.resetPassowrd);
 
 module.exports = _;
