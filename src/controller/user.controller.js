@@ -177,3 +177,29 @@ exports.resetPassowrd = asyncHandler(async (req, res) => {
   await user.save();
   return res.status(301).redirect("www.fron.com/login");
 });
+
+//login
+exports.login = asyncHandler(async (req, res) => {
+  const { phoneNumber, email, password } = req.body;
+  if (phoneNumber == undefined && email == undefined)
+    throw new customError(401, "PhoneNumber or Email Missing");
+  // search db
+  const user = await userModel.findOne({ phoneNumber, email });
+  if (!user) throw new customError(401, "user no Found / missing !!");
+
+  // check password
+  const passwordRight = await user.comparePassword(password);
+  if (!passwordRight)
+    throw new customError(401, "Passoword or email incorrect");
+  // generate accesToken and refresh Token
+  const accesToken = await user.generateAccesToken();
+  const refreshToken = await user.generateRefreshToken();
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV == 'development' ? false : true,
+    sameSite: 'none',
+    path: '/',
+    maxAge: 15 * 24 * 60 * 60 * 1000,
+  });
+});
+
