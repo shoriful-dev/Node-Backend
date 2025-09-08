@@ -3,7 +3,7 @@ const { apiResponse } = require('../../utils/apiResponse');
 const { customError } = require('../../utils/customError');
 const { Otp, emailSend } = require('../helpers/nodemailer');
 const userModel = require('../models/user.model');
-const { registrationTemplate } = require('../template/emailtemplate');
+const { registrationTemplate, resendOtpTemplate } = require('../template/emailtemplate');
 const { validateUser } = require('../validation/user.validation');
 const { sendSms } = require('../helpers/sms');
 
@@ -100,4 +100,60 @@ exports.verifyUser = asyncHandler(async (req, res) => {
     { name: validUser.name }
   );
 });
+
+// resend otp
+exports.resendOtp = asyncHandler(async (req, res) => {
+  const { email, phoneNumber } = req.body;
+  // now find the otp into database and verify otp
+  const User = await userModel.findOne({
+    email: email,
+    phoneNumber: phoneNumber,
+  });
+  const otp = Otp();
+  const expireTime = Date.now() + 10 * 60 * 60 * 1000;
+  if (email) {
+    const template = resendOtpTemplate(User.name, User.email, otp, expireTime);
+    await emailSend(User.email, "Resend Otp 🕺", template);
+    User.resetPasswordExpires = expireTime;
+    User.resetPasswordOtp = otp;
+    await User.save();
+  }
+  if (phoneNumber) {
+    const smsBody = `✅ Welcome to Node commerce, ${User.name}!
+Your otp is : ${otp}
+your time expires on ${new Date(expireTime).getTimezoneOffset()}
+Need help?
+018723345`;
+    const sms = await sendSms(User.phoneNumber, smsBody);
+    console.log(sms);
+    User.resetPasswordExpires = expireTime;
+    User.resetPasswordOtp = otp;
+    await User.save();
+  }
+  apiResponse.sendSuccess(
+    res,
+    200,
+    "Your Otp Send Sucesfully Check your email or phone",
+    null
+  );
+});
+
+// forgot password
+exports.forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  if (!email) throw new customError(401, "Email missing ");
+  const user = await userModel.findOne({ email });
+  if (!user)
+    throw new customError(
+      401,
+      "This email not Registred first Regitration our application"
+    );
+  // now send a email
+  return res
+    .status(301)
+    .redirect(
+      "https://www.udemy.com/course/complete-ai-guide/?couponCode=taufik.cit.bd@gmail.com"
+    );
+});
+
 
