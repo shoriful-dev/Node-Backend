@@ -80,3 +80,4 @@ exports.registrationTemplate = (
 </html>
 `;
 };
+

@@ -21,12 +21,12 @@ exports.Registration = asyncHandler(async (req, res) => {
     throw new customError(500, 'User not registerd server error!!');
   }
   // send confirm registration mail
-  const verifyEmailLink = `www.google.com/verifyEmail/${user.email}`;
   const otp = Otp();
   const expireTime = Date.now() + 10 * 60 * 1000;
   user.resetPasswordOtp = otp;
   user.resetPasswordExpires = expireTime;
   if (user.email) {
+    const verifyEmailLink = `www.fontend.com/verify-account/${user.email}`;
     const templete = registrationTemplate(
       user.name,
       user.email,
@@ -47,10 +47,6 @@ your time expires on ${new Date(expireTime).getTimezoneOffset()}
 Verify your account using this link: ${verifyEmailLink}
 Need help? Contact us anytime.`;
       const sms = await sendSms(user.phoneNumber, smsBody);
-      console.log(sms);
-      // if (sms?.data?.response_code !== 202) {
-      //   throw new customError(500, sms?.error_message);
-      // }
     }
   }
 
@@ -59,3 +55,49 @@ Need help? Contact us anytime.`;
     name: user.name,
   });
 });
+
+// verify phone number
+exports.verifyUser = asyncHandler(async (req, res) => {
+  const { email, otp, phoneNumber } = req.body;
+  if (!otp) {
+    throw new customError(401, "Your otp Missing");
+  }
+
+  // now find the otp into database and verify otp
+  const validUser = await UserModel.findOne({
+    email: email,
+    phoneNumber: phoneNumber,
+  });
+  if (!validUser) {
+    throw new customError(401, "User not Found !");
+  }
+  if (
+    phoneNumber &&
+    validUser.resetPasswordOtp == otp &&
+    validUser.resetPasswordExpires > Date.now()
+  ) {
+    validUser.phoneNumberVerified = true;
+    validUser.isActive = true;
+    validUser.resetPasswordExpires = null;
+    validUser.resetPasswordOtp = null;
+    await validUser.save();
+  }
+  if (
+    email &&
+    validUser.resetPasswordOtp == otp &&
+    validUser.resetPasswordExpires > Date.now()
+  ) {
+    validUser.emailVerified = true;
+    validUser.isActive = true;
+    validUser.resetPasswordExpires = null;
+    validUser.resetPasswordOtp = null;
+    await validUser.save();
+  }
+  apiResponse.sendSuccess(
+    res,
+    200,
+    "Your Otp matched ,  your acount Verified",
+    { name: validUser.name }
+  );
+});
+
