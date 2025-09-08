@@ -203,3 +203,21 @@ exports.login = asyncHandler(async (req, res) => {
   });
 });
 
+// Logout
+exports.logout = asyncHandler(async (req, res) => {
+  const token = req?.body?.token || req.headers?.authorization;
+  const { userId } = await jwt.verify(token, process.env.ACCESTOKEN_SCERET);
+  // find the user
+  const user = await userModel.findById(userId);
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "development" ? false : true,
+    sameSite: "none",
+    path: "/",
+  });
+
+  user.refreshToken = null;
+  await user.save();
+  apiResponse.sendSuccess(res, 200, "logout Sucesfull", { user });
+});
