@@ -25,14 +25,15 @@ exports.getAllCategory = asyncHandler(async (req, res) => {
   apiResponse.sendSuccess(res, 200, 'category found', category);
 });
 
-// // find a single category using slug
-// exports.singleCategory = asyncHandler(async (req, res) => {
-//   const { slug } = req.params;
-//   if (!slug) throw new customError(400, 'slug missing');
-//   const category = await CategoryModel.findOne({ slug: slug });
-//   if (!category) throw new customError(500, 'category not found');
-//   apiResponse.sendSuccess(res, 200, 'category found sucessfully', category);
-// });
+// Get single category using slug
+exports.singleCategory = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+  if (!slug) throw new customError(400, 'slug missing');
+  const category = await CategoryModel.findOne({ slug: slug });
+  if (!category) throw new customError(500, 'category not found');
+  apiResponse.sendSuccess(res, 200, 'category found sucessfully', category);
+});
+
 // // update category
 // exports.updateCategory = asyncHandler(async (req, res) => {
 //   const { slug } = req.params;
