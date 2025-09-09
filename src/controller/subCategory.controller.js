@@ -37,69 +37,69 @@ exports.getAllSubCategory = asyncHandler(async (req, res) => {
   apiResponse.sendSuccess(res, 200, 'Subcategory retrive Sucesfull',subCategory);
 });
 
-//@desc find subcategory using slug
-// exports.getSingleSubCategory = asyncHandler(async (req, res) => {
-//   const { slug } = req.params;
-//   if (!slug) throw new customError(500, 'subCategory slug not found !!');
+//@desc find single subcategory using slug
+exports.getSingleSubCategory = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+  if (!slug) throw new customError(500, 'subCategory slug not found !!');
 
-//   const subCategory = await subCategoryModel
-//     .find({ slug: slug })
-//     .populate('category')
-//     .sort({ createdAt: -1 });
-//   if (!subCategory) throw new customError(500, 'subCategory retrive Failed !!');
-//   apiResponse.sendSuccess(
-//     res,
-//     200,
-//     'Subcategory retrive Sucesfull',
-//     subCategory
-//   );
-// });
+  const subCategory = await subCategoryModel
+    .find({ slug: slug })
+    .populate('category')
+    .sort({ createdAt: -1 });
+  if (!subCategory) throw new customError(500, 'subCategory retrive Failed !!');
+  apiResponse.sendSuccess(
+    res,
+    200,
+    'Subcategory retrive Sucesfull',
+    subCategory
+  );
+});
 
 //@desc update subcategory
-// exports.updateSubCategory = asyncHandler(async (req, res) => {
-//   const { slug } = req.params;
-//   if (!slug) throw new customError(500, 'subCategory slug not found !!');
+exports.updateSubCategory = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+  if (!slug) throw new customError(500, 'subCategory slug not found !!');
 
-//   const subCategory = await subCategoryModel.findOneAndUpdate(
-//     { slug: slug },
-//     { ...req.body },
-//     { new: true }
-//   );
+  const subCategory = await subCategoryModel.findOneAndUpdate(
+    { slug: slug },
+    { ...req.body },
+    { new: true }
+  );
 
-//   if (!subCategory) throw new customError(500, 'subCategory update Failed !!');
-//   apiResponse.sendSuccess(
-//     res,
-//     200,
-//     'Subcategory retrive Sucesfull',
-//     subCategory
-//   );
-// });
+  if (!subCategory) throw new customError(500, 'subCategory update Failed !!');
+  apiResponse.sendSuccess(
+    res,
+    200,
+    'Subcategory retrive Sucesfull',
+    subCategory
+  );
+});
 
 //@desc delete subCatebory
-// exports.deleteSubCategory = asyncHandler(async (req, res) => {
-//   const { slug } = req.params;
-//   if (!slug) throw new customError(500, 'subCategory slug not found !!');
+exports.deleteSubCategory = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+  if (!slug) throw new customError(500, 'subCategory slug not found !!');
 
-//   const subCategoryInstance = await subCategoryModel.findOneAndDelete({
-//     slug: slug,
-//   });
-//   // remove sc id from category mode
-//   await categoryModel.findOneAndUpdate(
-//     { _id: subCategoryInstance.category },
-//     {
-//       $pull: { subCategory: subCategoryInstance._id },
-//     },
-//     {
-//       new: true,
-//     }
-//   );
+  const subCategoryInstance = await subCategoryModel.findOneAndDelete({
+    slug: slug,
+  });
+  // remove sc id from category mode
+  await categoryModel.findOneAndUpdate(
+    { _id: subCategoryInstance.category },
+    {
+      $pull: { subCategory: subCategoryInstance._id },
+    },
+    {
+      new: true,
+    }
+  );
 
-//   if (!subCategoryInstance)
-//     throw new customError(500, 'subCategory update Failed !!');
-//   apiResponse.sendSuccess(
-//     res,
-//     200,
-//     'Subcategory delete Sucesfull',
-//     subCategoryInstance
-//   );
-// });
+  if (!subCategoryInstance)
+    throw new customError(500, 'subCategory update Failed !!');
+  apiResponse.sendSuccess(
+    res,
+    200,
+    'Subcategory delete Sucesfull',
+    subCategoryInstance
+  );
+});
