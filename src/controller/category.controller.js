@@ -34,30 +34,29 @@ exports.singleCategory = asyncHandler(async (req, res) => {
   apiResponse.sendSuccess(res, 200, 'category found sucessfully', category);
 });
 
-// // update category
-// exports.updateCategory = asyncHandler(async (req, res) => {
-//   const { slug } = req.params;
-//   if (!slug) throw new customError(400, 'slug missing');
-//   // find the  category
-//   const category = await CategoryModel.findOne({ slug: slug });
-//   if (!category) throw new customError(500, 'category not found');
+// update category
+exports.updateCategory = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+  if (!slug) throw new customError(400, 'slug missing');
+  // find the  category
+  const category = await CategoryModel.findOne({ slug: slug });
+  if (!category) throw new customError(500, 'category not found');
 
-//   if (req.body.name) {
-//     category.name = req?.body?.name;
-//   }
-
-//   if (req.files.image) {
-//     const parts = category.image.split('/');
-//     const imageName = parts[parts.length - 1];
-//     const result = await deleteCloudinaryFile(imageName.split('?')[0]);
-//     if (result !== 'ok') throw new customError(400, 'image not deleted');
-//     const imageUrl = await uploadCloudinaryFile(req?.files?.image[0]?.path);
-//     category.image = imageUrl;
-//   }
-//   await category.save();
-
-//   apiResponse.sendSuccess(res, 200, 'category updated sucessfully', category);
-// });
+  if (req.body.name) {
+    category.name = req?.body?.name;
+  }
+  
+  if (req.files.image) {
+    const parts = category.image.split('/');
+    const imageName = parts[parts.length - 1];
+    const result = await deleteCloudinaryFile(imageName.split('?')[0]);
+    if (result !== 'ok') throw new customError(400, 'image not deleted');
+    const imageUrl = await uploadCloudinaryFile(req?.files?.image[0]?.path);
+    category.image = imageUrl;
+  }
+  await category.save();
+  apiResponse.sendSuccess(res, 200, 'category updated sucessfully', category);
+});
 
 // // delte
 // exports.deleteCategory = asyncHandler(async (req, res) => {
