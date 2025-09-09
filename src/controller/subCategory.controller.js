@@ -31,19 +31,11 @@ exports.createSubCategory = asyncHandler(async (req, res) => {
 });
 
 //@desc get all subCategory
-// exports.getAllSubCategory = asyncHandler(async (req, res) => {
-//   const subCategory = await subCategoryModel
-//     .find()
-//     .populate('category')
-//     .sort({ createdAt: -1 });
-//   if (!subCategory) throw new customError(500, 'subCategory retrive Failed !!');
-//   apiResponse.sendSuccess(
-//     res,
-//     200,
-//     'Subcategory retrive Sucesfull',
-//     subCategory
-//   );
-// });
+exports.getAllSubCategory = asyncHandler(async (req, res) => {
+  const subCategory = await subCategoryModel.find().populate('category').sort({ createdAt: -1 });
+  if (!subCategory) throw new customError(500, 'subCategory retrive Failed !!');
+  apiResponse.sendSuccess(res, 200, 'Subcategory retrive Sucesfull',subCategory);
+});
 
 //@desc find subcategory using slug
 // exports.getSingleSubCategory = asyncHandler(async (req, res) => {
