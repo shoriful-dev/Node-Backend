@@ -1,38 +1,38 @@
-const { asyncHandler } = require('../../utils/asyncHandler');
-const { apiResponse } = require('../../utils/apiResponse');
-const { customError } = require('../../utils/customError');
-const CategoryModel = require('../models/category.model');
-const { validateCategory } = require('../validation/category.validation');
-const { uploadCloudinaryFile, deleteCloudinaryFile } = require('../helpers/cloudinary');
-const categoryModel = require('../models/category.model');
+// const { asyncHandler } = require('../../utils/asyncHandler');
+// const { apiResponse } = require('../../utils/apiResponse');
+// const { customError } = require('../../utils/customError');
+// const CategoryModel = require('../models/category.model');
+// const { validateCategory } = require('../validation/category.validation');
+// const { uploadCloudinaryFile, deleteCloudinaryFile } = require('../helpers/cloudinary');
+// const categoryModel = require('../models/category.model');
 
 // Create Category
-exports.createCategory = asyncHandler(async (req, res) => {
-  const value = await validateCategory(req);
-  const imageUrl = await uploadCloudinaryFile(value?.image?.path);
-  const category = await new categoryModel({
-    name: value.name,
-    image: imageUrl,
-  }).save();
-  if (!category) throw new customError(500, 'category not created');
-  apiResponse.sendSuccess(res, 201, 'category created', category);
-});
+// exports.createCategory = asyncHandler(async (req, res) => {
+//   const value = await validateCategory(req);
+//   const imageUrl = await uploadCloudinaryFile(value?.image?.path);
+//   const category = await new categoryModel({
+//     name: value.name,
+//     image: imageUrl,
+//   }).save();
+//   if (!category) throw new customError(500, 'category not created');
+//   apiResponse.sendSuccess(res, 201, 'category created', category);
+// });
 
 // Get All Category
-exports.getAllCategory = asyncHandler(async (req, res) => {
-  const category = await CategoryModel.find().sort({ createdAt: -1 });
-  if (!category) throw new customError(500, 'category not found');
-  apiResponse.sendSuccess(res, 200, 'category found', category);
-});
+// exports.getAllCategory = asyncHandler(async (req, res) => {
+//   const category = await CategoryModel.find().sort({ createdAt: -1 });
+//   if (!category) throw new customError(500, 'category not found');
+//   apiResponse.sendSuccess(res, 200, 'category found', category);
+// });
 
 // Get single category using slug
-exports.singleCategory = asyncHandler(async (req, res) => {
-  const { slug } = req.params;
-  if (!slug) throw new customError(400, 'slug missing');
-  const category = await CategoryModel.findOne({ slug: slug });
-  if (!category) throw new customError(500, 'category not found');
-  apiResponse.sendSuccess(res, 200, 'category found sucessfully', category);
-});
+// exports.singleCategory = asyncHandler(async (req, res) => {
+//   const { slug } = req.params;
+//   if (!slug) throw new customError(400, 'slug missing');
+//   const category = await CategoryModel.findOne({ slug: slug });
+//   if (!category) throw new customError(500, 'category not found');
+//   apiResponse.sendSuccess(res, 200, 'category found sucessfully', category);
+// });
 
 // update category
 exports.updateCategory = asyncHandler(async (req, res) => {
