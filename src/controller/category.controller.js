@@ -1,10 +1,10 @@
-// const { asyncHandler } = require('../../utils/asyncHandler');
-// const { apiResponse } = require('../../utils/apiResponse');
-// const { customError } = require('../../utils/customError');
-// const CategoryModel = require('../models/category.model');
-// const { validateCategory } = require('../validation/category.validation');
-// const { uploadCloudinaryFile, deleteCloudinaryFile } = require('../helpers/cloudinary');
-// const categoryModel = require('../models/category.model');
+const { asyncHandler } = require('../../utils/asyncHandler');
+const { apiResponse } = require('../../utils/apiResponse');
+const { customError } = require('../../utils/customError');
+const CategoryModel = require('../models/category.model');
+const { validateCategory } = require('../validation/category.validation');
+const { uploadCloudinaryFile, deleteCloudinaryFile } = require('../helpers/cloudinary');
+const categoryModel = require('../models/category.model');
 
 // Create Category
 exports.createCategory = asyncHandler(async (req, res) => {
