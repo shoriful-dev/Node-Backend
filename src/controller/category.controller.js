@@ -7,16 +7,16 @@
 // const categoryModel = require('../models/category.model');
 
 // Create Category
-// exports.createCategory = asyncHandler(async (req, res) => {
-//   const value = await validateCategory(req);
-//   const imageUrl = await uploadCloudinaryFile(value?.image?.path);
-//   const category = await new categoryModel({
-//     name: value.name,
-//     image: imageUrl,
-//   }).save();
-//   if (!category) throw new customError(500, 'category not created');
-//   apiResponse.sendSuccess(res, 201, 'category created', category);
-// });
+exports.createCategory = asyncHandler(async (req, res) => {
+  const value = await validateCategory(req);
+  const imageUrl = await uploadCloudinaryFile(value?.image?.path);
+  const category = await new categoryModel({
+    name: value.name,
+    image: imageUrl,
+  }).save();
+  if (!category) throw new customError(500, 'category not created');
+  apiResponse.sendSuccess(res, 201, 'category created', category);
+});
 
 // Get All Category
 exports.getAllCategory = asyncHandler(async (req, res) => {
