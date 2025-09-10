@@ -19,11 +19,11 @@
 // });
 
 // Get All Category
-// exports.getAllCategory = asyncHandler(async (req, res) => {
-//   const category = await CategoryModel.find().sort({ createdAt: -1 });
-//   if (!category) throw new customError(500, 'category not found');
-//   apiResponse.sendSuccess(res, 200, 'category found', category);
-// });
+exports.getAllCategory = asyncHandler(async (req, res) => {
+  const category = await CategoryModel.find().sort({ createdAt: -1 });
+  if (!category) throw new customError(500, 'category not found');
+  apiResponse.sendSuccess(res, 200, 'category found', category);
+});
 
 // Get single category using slug
 exports.singleCategory = asyncHandler(async (req, res) => {
