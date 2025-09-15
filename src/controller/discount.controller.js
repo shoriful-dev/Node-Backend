@@ -47,21 +47,19 @@ exports.getAllDiscounts = asyncHandler(async (req, res) => {
 });
 
 // single discount
-// exports.getSingleDiscount = asyncHandler(async (req, res) => {
-//   const { slug } = req.params;
+exports.getSingleDiscount = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+  const discount = await discountModel
+    .findOne({ slug })
+    .populate('targetCategory')
+    .populate('targetSubcategory');
 
-//   const discount = await discountModel
-//     .findOne({ slug })
-//     // .populate("targetProduct", "name price")
-//     .populate('targetCategory')
-//     .populate('targetSubcategory');
+  if (!discount) {
+    throw new customError(404, 'Discount not found');
+  }
 
-//   if (!discount) {
-//     throw new customError(404, 'Discount not found');
-//   }
-
-//   apiResponse.sendSuccess(res, 200, 'Discount fetched successfully', discount);
-// });
+  apiResponse.sendSuccess(res, 200, 'Discount fetched successfully', discount);
+});
 
 // // update discount
 // exports.updateDiscount = asyncHandler(async (req, res) => {
