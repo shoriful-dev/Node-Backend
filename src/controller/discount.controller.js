@@ -28,25 +28,23 @@ exports.creatediscount = asyncHandler(async (req, res) => {
     );
   }
 
-  apiResponse.sendSuccess( res, 200, 'discount created sucessfully', discountInstance);
+  apiResponse.sendSuccess(
+    res,
+    200,
+    'discount created sucessfully',
+    discountInstance
+  );
 });
 
 // get all subcategory
-// exports.getAllDiscounts = asyncHandler(async (req, res) => {
-//   const discounts = await discountModel
-//     .find()
-//     // .populate("targetProduct") // Adjust fields as needed
-//     .populate('targetCategory') // Optional: populate category name
-//     .populate('targetSubcategory') // Optional: populate subcategory name
-//     .sort({ createdAt: -1 }); // Optional: sort by newest first
-
-//   apiResponse.sendSuccess(
-//     res,
-//     200,
-//     'All discounts fetched successfully',
-//     discounts
-//   );
-// });
+exports.getAllDiscounts = asyncHandler(async (req, res) => {
+  const discounts = await discountModel
+    .find()
+    .populate('targetCategory')
+    .populate('targetSubcategory')
+    .sort({ createdAt: -1 });
+  apiResponse.sendSuccess( res, 200, 'All discounts fetched successfully', discounts);
+});
 
 // single discount
 // exports.getSingleDiscount = asyncHandler(async (req, res) => {
@@ -78,57 +76,57 @@ exports.creatediscount = asyncHandler(async (req, res) => {
 //     throw new customError(404, 'Discount not found');
 //   }
 
-  // Update the discount
-  // const updatedDiscount = await discountModel.findOneAndUpdate(
-  //   { slug },
-  //   newData,
-  //   { new: true, runValidators: true }
-  // );
+// Update the discount
+// const updatedDiscount = await discountModel.findOneAndUpdate(
+//   { slug },
+//   newData,
+//   { new: true, runValidators: true }
+// );
 
-  // if (!updatedDiscount) {
-  //   throw new customError(500, 'Failed to update discount');
-  // }
+// if (!updatedDiscount) {
+//   throw new customError(500, 'Failed to update discount');
+// }
 
-  // === HANDLE RELATIONSHIP UPDATES ===
-  // const discountId = updatedDiscount._id;
+// === HANDLE RELATIONSHIP UPDATES ===
+// const discountId = updatedDiscount._id;
 
-  // === Category ===
-  // if (
-  //   existingDiscount.discountPlan === 'category' &&
-  //   existingDiscount.targetCategory?.toString() !==
-  //     updatedDiscount.targetCategory?.toString()
-  // ) {
-  //   // Remove from old category
-  //   await categotoryModel.findByIdAndUpdate(existingDiscount.targetCategory, {
-  //     discount: null,
-  //   });
-  //   // Add to new category
-  //   await categotoryModel.findByIdAndUpdate(updatedDiscount.targetCategory, {
-  //     $addToSet: { discount: discountId },
-  //   });
-  // }
+// === Category ===
+// if (
+//   existingDiscount.discountPlan === 'category' &&
+//   existingDiscount.targetCategory?.toString() !==
+//     updatedDiscount.targetCategory?.toString()
+// ) {
+//   // Remove from old category
+//   await categotoryModel.findByIdAndUpdate(existingDiscount.targetCategory, {
+//     discount: null,
+//   });
+//   // Add to new category
+//   await categotoryModel.findByIdAndUpdate(updatedDiscount.targetCategory, {
+//     $addToSet: { discount: discountId },
+//   });
+// }
 
-  // === Subcategory ===
-  // if (
-  //   existingDiscount.discountPlan === 'subcategory' &&
-  //   existingDiscount.targetSubcategory?.toString() !==
-  //     updatedDiscount.targetSubcategory?.toString()
-  // ) {
-  //   await subCategoryModel.findByIdAndUpdate(
-  //     existingDiscount.targetSubcategory,
-  //     {
-  //       discount: null,
-  //     }
-  //   );
-  //   await subCategoryModel.findByIdAndUpdate(
-  //     updatedDiscount.targetSubcategory,
-  //     {
-  //       $addToSet: { discount: discountId },
-  //     }
-  //   );
-  // }
+// === Subcategory ===
+// if (
+//   existingDiscount.discountPlan === 'subcategory' &&
+//   existingDiscount.targetSubcategory?.toString() !==
+//     updatedDiscount.targetSubcategory?.toString()
+// ) {
+//   await subCategoryModel.findByIdAndUpdate(
+//     existingDiscount.targetSubcategory,
+//     {
+//       discount: null,
+//     }
+//   );
+//   await subCategoryModel.findByIdAndUpdate(
+//     updatedDiscount.targetSubcategory,
+//     {
+//       $addToSet: { discount: discountId },
+//     }
+//   );
+// }
 
-  // === Product ===
+// === Product ===
 //   if (
 //     existingDiscount.discountPlan === 'product' &&
 //     existingDiscount.targetProduct?.toString() !==
@@ -149,7 +147,6 @@ exports.creatediscount = asyncHandler(async (req, res) => {
 //     updatedDiscount
 //   );
 // });
-
 
 // exports.deleteDiscount = asyncHandler(async (req, res) => {
 //   const { slug } = req.params;
