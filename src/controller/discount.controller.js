@@ -74,57 +74,57 @@ exports.updateDiscount = asyncHandler(async (req, res) => {
     throw new customError(404, 'Discount not found');
   }
 
-// Update the discount
-const updatedDiscount = await discountModel.findOneAndUpdate(
-  { slug },
-  newData,
-  { new: true, runValidators: true }
-);
+  // Update the discount
+  const updatedDiscount = await discountModel.findOneAndUpdate(
+    { slug },
+    newData,
+    { new: true, runValidators: true }
+  );
 
-if (!updatedDiscount) {
-  throw new customError(500, 'Failed to update discount');
-}
+  if (!updatedDiscount) {
+    throw new customError(500, 'Failed to update discount');
+  }
 
-// HANDLE RELATIONSHIP UPDATES
-const discountId = updatedDiscount._id;
+  // === HANDLE RELATIONSHIP UPDATES ===
+  const discountId = updatedDiscount._id;
 
-// Category
-if (
-  existingDiscount.discountPlan === 'category' &&
-  existingDiscount.targetCategory?.toString() !==
-    updatedDiscount.targetCategory?.toString()
-) {
-  // Remove from old category
-  await categotoryModel.findByIdAndUpdate(existingDiscount.targetCategory, {
-    discount: null,
-  });
-  // Add to new category
-  await categotoryModel.findByIdAndUpdate(updatedDiscount.targetCategory, {
-    $addToSet: { discount: discountId },
-  });
-}
-
-// Subcategory
-if (
-  existingDiscount.discountPlan === 'subcategory' &&
-  existingDiscount.targetSubcategory?.toString() !==
-    updatedDiscount.targetSubcategory?.toString()
-) {
-  await subCategoryModel.findByIdAndUpdate(
-    existingDiscount.targetSubcategory,
-    {
+  // === Category ===
+  if (
+    existingDiscount.discountPlan === 'category' &&
+    existingDiscount.targetCategory?.toString() !==
+      updatedDiscount.targetCategory?.toString()
+  ) {
+    // Remove from old category
+    await categotoryModel.findByIdAndUpdate(existingDiscount.targetCategory, {
       discount: null,
-    }
-  );
-  await subCategoryModel.findByIdAndUpdate(
-    updatedDiscount.targetSubcategory,
-    {
+    });
+    // Add to new category
+    await categotoryModel.findByIdAndUpdate(updatedDiscount.targetCategory, {
       $addToSet: { discount: discountId },
-    }
-  );
-}
+    });
+  }
 
-// Product
+  // === Subcategory ===
+  if (
+    existingDiscount.discountPlan === 'subcategory' &&
+    existingDiscount.targetSubcategory?.toString() !==
+      updatedDiscount.targetSubcategory?.toString()
+  ) {
+    await subCategoryModel.findByIdAndUpdate(
+      existingDiscount.targetSubcategory,
+      {
+        discount: null,
+      }
+    );
+    await subCategoryModel.findByIdAndUpdate(
+      updatedDiscount.targetSubcategory,
+      {
+        $addToSet: { discount: discountId },
+      }
+    );
+  }
+
+  // === Product ===
   if (
     existingDiscount.discountPlan === 'product' &&
     existingDiscount.targetProduct?.toString() !==
@@ -146,35 +146,34 @@ if (
   );
 });
 
-// exports.deleteDiscount = asyncHandler(async (req, res) => {
-//   const { slug } = req.params;
+// Delete Discount
+exports.deleteDiscount = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
 
-//   // Find the discount first
-//   const discount = await discountModel.findOne({ slug });
-//   if (!discount) {
-//     throw new customError(404, 'Discount not found');
-//   }
+  // Find the discount first
+  const discount = await discountModel.findOne({ slug });
+  if (!discount) {
+    throw new customError(404, 'Discount not found');
+  }
 
-//   // === Remove discount reference from related models ===
-//   if (discount.discountPlan === 'category') {
-//     await categotoryModel.findByIdAndUpdate(discount.targetCategory, {
-//       discount: null,
-//     });
-//   }
+  // Remove discount reference from related models
+  if (discount.discountPlan === 'category') {
+    await categotoryModel.findByIdAndUpdate(discount.targetCategory, {
+      discount: null,
+    });
+  }
 
-//   if (discount.discountPlan === 'subcategory') {
-//     await subCategoryModel.findByIdAndUpdate(discount.targetSubcategory, {
-//       discount: null,
-//     });
-//   }
+  if (discount.discountPlan === 'subcategory') {
+    await subCategoryModel.findByIdAndUpdate(discount.targetSubcategory, {discount: null,});
+  }
 
-//   if (discount.discountPlan === 'product') {
-//     await productModel.findByIdAndUpdate(discount.targetProduct, {
-//       discount: null,
-//     });
-//   }
+  if (discount.discountPlan === 'product') {
+    await productModel.findByIdAndUpdate(discount.targetProduct, {
+      discount: null,
+    });
+  }
 
-//   // Delete the discount
-//   const deletedDiscount = await discountModel.deleteOne({ _id: discount._id });
-//   apiResponse.sendSuccess( res, 200, 'Discount deleted successfully', deletedDiscount);
-// });
+  // Delete the discount
+  const deletedDiscount = await discountModel.deleteOne({ _id: discount._id });
+  apiResponse.sendSuccess( res, 200, 'Discount deleted successfully', deletedDiscount);
+});
