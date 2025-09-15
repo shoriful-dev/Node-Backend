@@ -62,89 +62,89 @@ exports.getSingleDiscount = asyncHandler(async (req, res) => {
 });
 
 // // update discount
-// exports.updateDiscount = asyncHandler(async (req, res) => {
-//   const { slug } = req.params;
+exports.updateDiscount = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
 
-//   // Validate updated data
-//   const newData = await validateDiscount(req);
+  // Validate updated data
+  const newData = await validateDiscount(req);
 
-//   // Fetch the current discount before updating
-//   const existingDiscount = await discountModel.findOne({ slug });
-//   if (!existingDiscount) {
-//     throw new customError(404, 'Discount not found');
-//   }
+  // Fetch the current discount before updating
+  const existingDiscount = await discountModel.findOne({ slug });
+  if (!existingDiscount) {
+    throw new customError(404, 'Discount not found');
+  }
 
 // Update the discount
-// const updatedDiscount = await discountModel.findOneAndUpdate(
-//   { slug },
-//   newData,
-//   { new: true, runValidators: true }
-// );
+const updatedDiscount = await discountModel.findOneAndUpdate(
+  { slug },
+  newData,
+  { new: true, runValidators: true }
+);
 
-// if (!updatedDiscount) {
-//   throw new customError(500, 'Failed to update discount');
-// }
+if (!updatedDiscount) {
+  throw new customError(500, 'Failed to update discount');
+}
 
-// === HANDLE RELATIONSHIP UPDATES ===
-// const discountId = updatedDiscount._id;
+// HANDLE RELATIONSHIP UPDATES
+const discountId = updatedDiscount._id;
 
-// === Category ===
-// if (
-//   existingDiscount.discountPlan === 'category' &&
-//   existingDiscount.targetCategory?.toString() !==
-//     updatedDiscount.targetCategory?.toString()
-// ) {
-//   // Remove from old category
-//   await categotoryModel.findByIdAndUpdate(existingDiscount.targetCategory, {
-//     discount: null,
-//   });
-//   // Add to new category
-//   await categotoryModel.findByIdAndUpdate(updatedDiscount.targetCategory, {
-//     $addToSet: { discount: discountId },
-//   });
-// }
+// Category
+if (
+  existingDiscount.discountPlan === 'category' &&
+  existingDiscount.targetCategory?.toString() !==
+    updatedDiscount.targetCategory?.toString()
+) {
+  // Remove from old category
+  await categotoryModel.findByIdAndUpdate(existingDiscount.targetCategory, {
+    discount: null,
+  });
+  // Add to new category
+  await categotoryModel.findByIdAndUpdate(updatedDiscount.targetCategory, {
+    $addToSet: { discount: discountId },
+  });
+}
 
-// === Subcategory ===
-// if (
-//   existingDiscount.discountPlan === 'subcategory' &&
-//   existingDiscount.targetSubcategory?.toString() !==
-//     updatedDiscount.targetSubcategory?.toString()
-// ) {
-//   await subCategoryModel.findByIdAndUpdate(
-//     existingDiscount.targetSubcategory,
-//     {
-//       discount: null,
-//     }
-//   );
-//   await subCategoryModel.findByIdAndUpdate(
-//     updatedDiscount.targetSubcategory,
-//     {
-//       $addToSet: { discount: discountId },
-//     }
-//   );
-// }
+// Subcategory
+if (
+  existingDiscount.discountPlan === 'subcategory' &&
+  existingDiscount.targetSubcategory?.toString() !==
+    updatedDiscount.targetSubcategory?.toString()
+) {
+  await subCategoryModel.findByIdAndUpdate(
+    existingDiscount.targetSubcategory,
+    {
+      discount: null,
+    }
+  );
+  await subCategoryModel.findByIdAndUpdate(
+    updatedDiscount.targetSubcategory,
+    {
+      $addToSet: { discount: discountId },
+    }
+  );
+}
 
-// === Product ===
-//   if (
-//     existingDiscount.discountPlan === 'product' &&
-//     existingDiscount.targetProduct?.toString() !==
-//       updatedDiscount.targetProduct?.toString()
-//   ) {
-//     await productModel.findByIdAndUpdate(existingDiscount.targetProduct, {
-//       discount: null,
-//     });
-//     await productModel.findByIdAndUpdate(updatedDiscount.targetProduct, {
-//       $addToSet: { discount: discountId },
-//     });
-//   }
+// Product
+  if (
+    existingDiscount.discountPlan === 'product' &&
+    existingDiscount.targetProduct?.toString() !==
+      updatedDiscount.targetProduct?.toString()
+  ) {
+    await productModel.findByIdAndUpdate(existingDiscount.targetProduct, {
+      discount: null,
+    });
+    await productModel.findByIdAndUpdate(updatedDiscount.targetProduct, {
+      $addToSet: { discount: discountId },
+    });
+  }
 
-//   apiResponse.sendSuccess(
-//     res,
-//     200,
-//     'Discount updated successfully',
-//     updatedDiscount
-//   );
-// });
+  apiResponse.sendSuccess(
+    res,
+    200,
+    'Discount updated successfully',
+    updatedDiscount
+  );
+});
 
 // exports.deleteDiscount = asyncHandler(async (req, res) => {
 //   const { slug } = req.params;
