@@ -35,7 +35,7 @@ const discountSchema = new mongoose.Schema(
     },
     discountPlan: {
       type: String,
-      enum: ['flat', 'category', 'product'],
+      enum: ['flat', 'category', 'product', 'subcategory'],
       required: true,
     },
     targetProduct: {

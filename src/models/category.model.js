@@ -26,8 +26,8 @@ const categorySchema = new mongoose.Schema(
     },
     discount: {
       type: mongoose.Types.ObjectId,
-      ref: "Discount"
-    }
+      ref: 'Discount',
+    },
   },
   { timestamps: true }
 );

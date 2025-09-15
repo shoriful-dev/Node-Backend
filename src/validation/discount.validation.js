@@ -44,20 +44,20 @@ const discountValidationSchema = Joi.object(
       'any.required': 'Discount type is required.',
     }),
     discountPlan: Joi.string()
-      .valid('flat', 'category', 'product')
+      .valid('flat', 'category', 'product', 'subcategory')
       .required()
       .messages({
         'any.only':
-          "Discount plan must be either 'flat', 'category' or 'product'.",
+          "Discount plan must be either 'flat', 'category' or 'product' subcategory.",
         'any.required': 'Discount plan is required.',
       }),
-    targetProduct: Joi.string().custom(isValidObjectId).messages({
+    targetProduct: Joi.string().allow(null).messages({
       'any.invalid': 'Target product ID is not valid.',
     }),
-    targetCategory: Joi.string().custom(isValidObjectId).messages({
+    targetCategory: Joi.string().allow(null).messages({
       'any.invalid': 'Target category ID is not valid.',
     }),
-    targetSubcategory: Joi.string().custom(isValidObjectId).messages({
+    targetSubcategory: Joi.string().allow(null).messages({
       'any.invalid': 'Target subcategory ID is not valid.',
     }),
     isActive: Joi.boolean().default(true),
