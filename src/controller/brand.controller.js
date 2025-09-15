@@ -7,6 +7,7 @@ const {
   uploadCloudinaryFile,
   deleteCloudinaryFile,
 } = require('../helpers/cloudinary');
+
 //@desc crearte new brand
 exports.createBrand = asyncHandler(async (req, res) => {
   const data = await validateBrand(req);
@@ -31,7 +32,6 @@ exports.getAllBrand = asyncHandler(async (req, res) => {
 });
 
 // get single brand
-
 exports.getsingleBrand = asyncHandler(async (req, res) => {
   const { slug } = req.params;
   if (!slug) throw new customError(500, 'slug not found!!');
@@ -39,3 +39,4 @@ exports.getsingleBrand = asyncHandler(async (req, res) => {
   if (!allbrand) throw new customError(500, 'brand not found!!');
   apiResponse.sendSuccess(res, 201, 'brand retrive sucessfully ', allbrand);
 });
+

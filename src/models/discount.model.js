@@ -95,5 +95,4 @@ discountSchema.pre('findOneAndUpdate', function (next) {
   next();
 });
 
-module.exports =
-  mongoose.models.Discount || mongoose.model('Discount', discountSchema);
+module.exports = mongoose.models.Discount || mongoose.model('Discount', discountSchema);
