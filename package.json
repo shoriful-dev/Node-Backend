@@ -14,6 +14,7 @@
   "dependencies": {
     "axios": "^1.11.0",
     "bcrypt": "^6.0.0",
+    "bwip-js": "^4.7.0",
     "cloudinary": "^2.7.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -26,6 +27,7 @@
     "multer": "^2.0.2",
     "nodemailer": "^7.0.5",
     "nodemon": "^3.1.10",
+    "qrcode": "^1.5.4",
     "slugify": "^1.6.6"
   }
 }
