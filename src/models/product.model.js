@@ -89,7 +89,6 @@ const productSchema = new mongoose.Schema(
     },
     retailPrice: {
       type: Number,
-      required: true,
     },
     retailPriceProfitAmount: Number,
     retailPriceProfitPercentance: {
@@ -98,7 +97,6 @@ const productSchema = new mongoose.Schema(
     },
     wholesalePrice: {
       type: Number,
-      required: true,
     },
     alertQuantity: Number,
     stockAlert: Boolean,

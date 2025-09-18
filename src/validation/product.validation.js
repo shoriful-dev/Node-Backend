@@ -46,13 +46,13 @@ const productValidationSchema = Joi.object(
     color: Joi.string().allow("", null),
     stock: Joi.number().allow(null),
     warehouseLocation: Joi.string().hex().length(24).allow(null, ""),
-    retailPrice: Joi.number().required().messages({
+    retailPrice: Joi.number().messages({
       "number.base": "Retail price must be a number.",
       "any.required": "Retail price is required.",
     }),
     retailPriceProfitAmount: Joi.number().allow(null),
     retailPriceProfitPercentance: Joi.number().max(100).allow(null),
-    wholesalePrice: Joi.number().required().messages({
+    wholesalePrice: Joi.number().messages({
       "number.base": "Wholesale price must be a number.",
       "any.required": "Wholesale price is required.",
     }),
