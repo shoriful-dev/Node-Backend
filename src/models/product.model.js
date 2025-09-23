@@ -101,7 +101,10 @@ const productSchema = new mongoose.Schema(
     alertQuantity: Number,
     stockAlert: Boolean,
     instock: Boolean,
-    isActive: Boolean,
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
     minimumOrderQuantity: Number,
   },
   { timestamps: true }

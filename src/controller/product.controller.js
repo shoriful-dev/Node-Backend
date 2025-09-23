@@ -171,3 +171,97 @@ exports.productpagination = asyncHandler(async (req, res) => {
     totalitem,
   });
 });
+
+// price range
+exports.priceRange = asyncHandler(async (req, res) => {
+  const { minPrice, maxPrice } = req.query;
+  if ((!minPrice, !maxPrice))
+    throw new customError(401, "missing minprice or maxPrice");
+  let query;
+  if (minPrice && maxPrice) {
+    query = { $gte: minPrice, $lte: maxPrice };
+  } else if (minPrice) {
+    query = { $lte: maxPrice };
+  } else if (maxPrice) {
+    query = { $gte: maxPrice };
+  } else {
+    query = {};
+  }
+
+  const product = await productModel
+    .find({
+      retailPrice: query,
+    })
+    .sort({ createdAt: -1 })
+    .populate({
+      path: "category subCategory brand",
+    });
+
+  if (!product.length) throw new customError(401, "Product not found !!");
+  apiResponse.sendSuccess(res, 200, "product retrive sucessfullly ", product);
+});
+
+// product order
+exports.productOrder = asyncHandler(async (req, res) => {
+  const { sort_by } = req.query;
+  if (!sort_by) throw new customError(401, "query missing");
+  let sortQuery = {};
+  if (sort_by == "date-descending") {
+    sortQuery = { createdAt: -1 };
+  } else if (sort_by == "date-ascending") {
+    sortQuery = { createdAt: 1 };
+  } else if (sort_by == "price-descending") {
+    sortQuery = { retailPrice: -1 };
+  } else if (sort_by == "price-ascending") {
+    sortQuery = { retailPrice: 1 };
+  } else if (sort_by == "name-descending") {
+    sortQuery = { name: -1 };
+  } else if (sort_by == "name-ascending") {
+    sortQuery = { name: 1 };
+  } else {
+    sortQuery = {};
+  }
+
+  const product = await productModel.find({}).sort(sortQuery);
+  if (!product.length) throw new customError(401, "product not found");
+  apiResponse.sendSuccess(res, 200, "product retrive sucessfullly", product);
+});
+
+// delete product
+exports.deleteProduct = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+  if (!slug) throw new customError(401, "slug is not define !!");
+  const product = await productModel.findOne({ slug });
+  if (!product) throw new customError(401, "product not found !!");
+
+  for (let img of product.image) {
+    const publicid = getPublicId(img);
+    await deleteCloudinaryFile(publicid);
+  }
+  const confrimDelete = await productModel.findOneAndDelete({ slug });
+  if (!confrimDelete) throw new customError(500, "delete failed !!");
+  apiResponse.sendSuccess(
+    res,
+    200,
+    "product deleted sucessfullly",
+    confrimDelete
+  );
+});
+
+// product active deactive
+exports.changeProductMode = asyncHandler(async (req, res) => {
+  const { slug, mode } = req.query;
+  if (!slug) throw new customError(401, "slug is not define !!");
+  const product = await productModel.findOne({ slug });
+  if (!product) throw new customError(401, "product not found !!");
+
+  product.isActive = mode == "active" ? true : false;
+  await product.save();
+
+  apiResponse.sendSuccess(
+    res,
+    200,
+    "product mode update sucessfullly",
+    confrimDelete
+  );
+});
