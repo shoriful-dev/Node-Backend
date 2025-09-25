@@ -29,10 +29,12 @@ const productSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Brand",
     },
-    variant: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Variant",
-    },
+    variant: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Variant",
+      },
+    ],
     discount: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Discount",
