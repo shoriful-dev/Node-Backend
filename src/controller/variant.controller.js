@@ -80,3 +80,45 @@ exports.deleteVariant = asyncHandler(async (req, res) => {
     variant
   );
 });
+
+// update varinant
+exports.updateVariantInfo = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+  const data = req.body;
+
+  for (let field in data) {
+    if (data[field] == "" || undefined || null) {
+      throw new customError(401, `${field} is Missing`);
+    }
+  }
+
+  const variant = await variantModel.findOne({ slug: slug });
+  if (!variant) throw new customError(400, "variant not found");
+
+  const isMatched = data.product !== variant._id;
+  if (!isMatched) {
+    productModel.findOneAndUpdate(
+      { _id: variant.product },
+      { $pull: { variant: variant._id } }
+    );
+  } else {
+    productModel.findOneAndUpdate(
+      { _id: data.product },
+      { $push: { variant: variant._id } }
+    );
+  }
+
+  // update varint db
+  const updateVariant = await variantModel.findOneAndUpdate(
+    { slug },
+    { ...data },
+    { new: true }
+  );
+  if (!updateVariant) throw new customError(501, "update failed");
+  apiResponse.sendSuccess(
+    res,
+    200,
+    "variant ifno updated sucessfully",
+    updateVariant
+  );
+});

@@ -10,6 +10,10 @@ _.route("/create-variant").post(
 
 _.route("/getall-variant").get(variantController.getAllVarinat);
 _.route("/single-variant/:slug").get(variantController.getSingleVariant);
+_.route("/update-variantinfo/:slug").put(
+  upload.fields([{ name: "image", maxCount: 10 }]),
+  variantController.updateVariantInfo
+);
 _.route("/delete-variant/:slug").delete(variantController.deleteVariant);
 
 module.exports = _;
