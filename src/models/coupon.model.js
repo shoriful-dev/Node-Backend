@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-const slugify = require('slugify');
-const { customError } = require('../../utils/customError');
+const mongoose = require("mongoose");
+const slugify = require("slugify");
+const { customError } = require("../../utils/customError");
 
 const couponSchema = new mongoose.Schema(
   {
@@ -32,7 +32,7 @@ const couponSchema = new mongoose.Schema(
     },
     discountType: {
       type: String,
-      enum: ['percentage', 'tk'],
+      enum: ["percentage", "tk"],
       required: true,
     },
     discountValue: {
@@ -44,10 +44,10 @@ const couponSchema = new mongoose.Schema(
 );
 
 // Make a slug using the code
-couponSchema.pre('save', function (next) {
-  if (this.isModified('code')) {
+couponSchema.pre("save", function (next) {
+  if (this.isModified("code")) {
     this.slug = slugify(this.code, {
-      replacement: '-',
+      replacement: "-",
       remove: undefined,
       lower: true,
       strict: false,
@@ -57,13 +57,28 @@ couponSchema.pre('save', function (next) {
   next();
 });
 
-// Check if the slug is already in use
-couponSchema.pre('save', async function (next) {
-  const slug = await this.constructor.findOne({ slug: this.slug });
-  if (slug && slug._id.toString() !== this._id.toString()) {
-    throw new customError(401, 'Coupon code already exists');
+couponSchema.pre("findOneAndUpdate", function (next) {
+  const update = this.getUpdate();
+  if (update.code) {
+    update.slug = slugify(update.code, {
+      replacement: "-",
+      lower: true,
+      strict: false,
+      trim: true,
+    });
+    this.setUpdate(update);
   }
   next();
 });
 
-module.exports = mongoose.models.Coupon || mongoose.model('Coupon', couponSchema);
+// Check if the slug is already in use
+couponSchema.pre("save", async function (next) {
+  const slug = await this.constructor.findOne({ slug: this.slug });
+  if (slug && slug._id.toString() !== this._id.toString()) {
+    throw new customError(401, "Coupon code already exists");
+  }
+  next();
+});
+
+module.exports =
+  mongoose.models.Coupon || mongoose.model("Coupon", couponSchema);

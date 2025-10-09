@@ -56,7 +56,12 @@ const variantSchema = new mongoose.Schema(
         type: String,
       },
     ],
-
+    reviews: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
     isActive: {
       type: Boolean,
       default: true,
