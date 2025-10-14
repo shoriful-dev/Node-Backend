@@ -27,6 +27,11 @@ const cartSchema = new mongoose.Schema(
           required: true,
           min: 1,
         },
+        price: {
+          type: Number,
+          required: true,
+          min: 1,
+        },
         unitTotalPrice: {
           type: Number,
           required: true,
@@ -50,14 +55,20 @@ const cartSchema = new mongoose.Schema(
       ref: "Coupon",
       default: null,
     },
-    discountPrice: {
+    totalproduct: {
       type: Number,
-      default: 0,
+    },
+    discountAmount: {
+      type: Number,
       min: 0,
+      default: 0,
+    },
+    discountType: {
+      type: String,
     },
     totalAmountOfWholeProduct: {
       type: Number,
-      required: true,
+      required: false,
       min: 0,
     },
   },
