@@ -96,7 +96,7 @@ exports.addToCart = asyncHandler(async (req, res) => {
         cartItem.product == productId || cartItem.variant == variantId
     );
 
-    if (findIitemIndex > 0) {
+    if (findIitemIndex >= 0) {
       cart.items[findIitemIndex].quantity += quantity || 1;
       cart.items[findIitemIndex].unitTotalPrice = Math.floor(
         cart.items[findIitemIndex].price * cart.items[findIitemIndex].quantity
@@ -150,4 +150,110 @@ exports.applyCoupon = asyncHandler(async (req, res) => {
   cart.totalAmountOfWholeProduct = afterdiscount;
   await cart.save();
   apiResponse.sendSuccess(res, 200, "apply coupon sucessfully", cart);
+});
+
+// increment product quantity
+exports.incremenItemQuantity = asyncHandler(async (req, res) => {
+  const { itemId } = req.body;
+  const cart = await cartModel.findOne({
+    "items._id": itemId,
+  });
+
+  const findIndex = cart.items.findIndex((item) => item._id == itemId);
+  const targetItem = cart.items[findIndex];
+  targetItem.quantity += 1;
+  targetItem.unitTotalPrice = Math.ceil(targetItem.quantity * targetItem.price);
+  // overall price increment
+
+  const totalcartInfo = cart.items.reduce(
+    (acc, item) => {
+      acc.totalprice += item.unitTotalPrice;
+      acc.totalproduct += item.quantity;
+      return acc;
+    },
+    {
+      totalproduct: 0,
+      totalprice: 0,
+    }
+  );
+
+  cart.totalAmountOfWholeProduct = totalcartInfo.totalprice;
+  cart.totalproduct = totalcartInfo.totalproduct;
+
+  await cart.save();
+  apiResponse.sendSuccess(res, 200, " cart increment  sucessfully", cart);
+});
+
+// decrement produc qunatity
+exports.dectementItemQuantity = asyncHandler(async (req, res) => {
+  const { itemId } = req.body;
+  const cart = await cartModel.findOne({
+    "items._id": itemId,
+  });
+
+  const findIndex = cart.items.findIndex((item) => item._id == itemId);
+  const targetItem = cart.items[findIndex];
+  if (targetItem.quantity > 1) {
+    targetItem.quantity -= 1;
+    targetItem.unitTotalPrice = Math.ceil(
+      targetItem.quantity * targetItem.price
+    );
+  } else {
+    targetItem.quantity = targetItem.quantity;
+    targetItem.unitTotalPrice = Math.ceil(
+      targetItem.quantity * targetItem.price
+    );
+  }
+
+  // overall price increment
+
+  const totalcartInfo = cart.items.reduce(
+    (acc, item) => {
+      acc.totalprice += item.unitTotalPrice;
+      acc.totalproduct += item.quantity;
+      return acc;
+    },
+    {
+      totalproduct: 0,
+      totalprice: 0,
+    }
+  );
+
+  cart.totalAmountOfWholeProduct = totalcartInfo.totalprice;
+  cart.totalproduct = totalcartInfo.totalproduct;
+
+  await cart.save();
+  apiResponse.sendSuccess(res, 200, " cart decrement sucessfully", cart);
+});
+
+// decrement produc qunatity
+exports.removeCartItem = asyncHandler(async (req, res) => {
+  const { itemId } = req.body;
+  const cart = await cartModel.findOne({
+    "items._id": itemId,
+  });
+
+
+  const dueItems = cart.items.filter((item) => item._id != itemId);
+  cart.items = dueItems;
+
+  const totalcartInfo = cart.items.reduce(
+    (acc, item) => {
+      acc.totalprice += item.unitTotalPrice;
+      acc.totalproduct += item.quantity;
+      return acc;
+    },
+    {
+      totalproduct: 0,
+      totalprice: 0,
+    }
+  );
+
+  cart.totalAmountOfWholeProduct = totalcartInfo.totalprice;
+  cart.totalproduct = totalcartInfo.totalproduct;
+  await cart.save();
+  if (cart.items.length == 0) {
+    await cartModel.deleteOne({ _id: cart._id });
+  }
+  apiResponse.sendSuccess(res, 200, " cart remove sucessfully", cart);
 });
