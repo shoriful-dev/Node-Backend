@@ -6,6 +6,7 @@ const productModel = require("../models/product.model");
 const varinatModel = require("../models/varinant.model");
 const couponModel = require("../models/coupon.model");
 const { validateCartItemAction } = require("../validation/cart.validation");
+const { getIo } = require("../socket-io/server");
 
 // apply coupon
 const applyCoupon = async (originalAmount, coupon) => {
@@ -132,6 +133,11 @@ exports.addToCart = asyncHandler(async (req, res) => {
   cart.totalproduct = totalcartInfo.totalproduct;
 
   await cart.save();
+  // emit event
+  getIo().to("123").emit("addtocart", {
+    message: "add to cart sucessfully",
+    data: null,
+  });
   apiResponse.sendSuccess(res, 201, "add to cart sucessfully", cart);
 });
 
@@ -232,7 +238,6 @@ exports.removeCartItem = asyncHandler(async (req, res) => {
   const cart = await cartModel.findOne({
     "items._id": itemId,
   });
-
 
   const dueItems = cart.items.filter((item) => item._id != itemId);
   cart.items = dueItems;
