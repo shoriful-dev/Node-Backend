@@ -95,13 +95,15 @@ exports.updateVariantInfo = asyncHandler(async (req, res) => {
   const variant = await variantModel.findOne({ slug: slug });
   if (!variant) throw new customError(400, "variant not found");
 
-  const isMatched = data.product !== variant._id;
-  if (!isMatched) {
+  const isNotMatched = data.product !== variant._id;
+  if (isNotMatched) {
     productModel.findOneAndUpdate(
       { _id: variant.product },
       { $pull: { variant: variant._id } }
     );
-  } else {
+  }
+
+  if (!isNotMatched) {
     productModel.findOneAndUpdate(
       { _id: data.product },
       { $push: { variant: variant._id } }

@@ -108,6 +108,10 @@ const productSchema = new mongoose.Schema(
       default: true,
     },
     minimumOrderQuantity: Number,
+    totalSale: {
+      type: Number,
+      min: 0,
+    },
   },
   { timestamps: true }
 );
