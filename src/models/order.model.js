@@ -7,7 +7,6 @@ const orderSchema = new mongoose.Schema(
   {
     user: {
       type: String,
-      required: true,
       trim: true,
     },
     guestId: {
@@ -28,15 +27,14 @@ const orderSchema = new mongoose.Schema(
         type: String,
         default: "Bangladesh",
       },
-      deliveryZone: {
-        type: String,
-        enum: ["inside_dhaka", "outside_dhaka", "sub_area"],
-      },
     },
     productWeight: { type: Number, default: 0 },
     deliveryCharge: {
       type: mongoose.Types.ObjectId,
       ref: "DeliveryCharge",
+    },
+    deliveryZone: {
+      type: String,
     },
     coupon: {
       type: mongoose.Schema.Types.ObjectId,
