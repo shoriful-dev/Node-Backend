@@ -63,14 +63,17 @@ const orderValidationSchema = Joi.object({
       "any.invalid": "DeliveryCharge ID must be a valid ObjectId.",
       "any.required": "DeliveryCharge ID is required.",
     }),
-}).options({ allowUnknown: true });
+})
 
 // Validation Function
 exports.validateOrder = async (req) => {
   try {
     const value = await orderValidationSchema.validateAsync(req.body, {
-      abortEarly: true, // stop on first error
-      stripUnknown: true, // remove extra fields
+
+      abortEarly: true,     // stop on first error
+      stripUnknown: false,  // keep unknown fields if you want
+      allowUnknown: true,   // ✅ allow extra (unknown) fields
+    
     });
     return value;
   } catch (error) {

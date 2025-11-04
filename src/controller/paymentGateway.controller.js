@@ -21,7 +21,9 @@ exports.sucess = asyncHandler(async (req, res) => {
     throw new customError(501, "payment not valid");
   await orderModel.findOneAndUpdate(
     { transactionId: validatePayment.tran_id },
-    { paymentStatus: validatePayment.status ? "VALID" : "success" }
+    { paymentStatus: validatePayment.status ? "VALID" : "success" , valId:validatePayment.val_id ,
+      paymentGatewayData: validatePayment
+    }
   );
 
   apiResponse.sendSuccess(res, 200, "payment sucesfull", null);
