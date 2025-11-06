@@ -57,7 +57,7 @@ const orderSchema = new mongoose.Schema(
     },
     paymentStatus: {
       type: String,
-      enum: ["Pending", "success", "failed", "cancelled"],
+
       default: "Pending",
     },
     // SSLCommerz Payment Gateway Specific
@@ -81,7 +81,6 @@ const orderSchema = new mongoose.Schema(
     // ORDER STATUS
     orderStatus: {
       type: String,
-      enum: ["Pending", "Hold", "Confirmed", "CourierPending"],
       default: "Pending",
     },
     // INVOICE ID
@@ -101,6 +100,17 @@ const orderSchema = new mongoose.Schema(
         type: String,
         default: "pending",
       },
+    },
+    returnStatus: {
+      type: String,
+      default: "No Request",
+    },
+    returnId: {
+      type: Number,
+    },
+    returnStatusHistory: {
+      type: mongoose.Schema.Types.Mixed,
+      default: null,
     },
     followUp: {
       type: mongoose.Schema.Types.ObjectId,
