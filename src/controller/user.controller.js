@@ -180,11 +180,12 @@ exports.resetPassowrd = asyncHandler(async (req, res) => {
 
 //login
 exports.login = asyncHandler(async (req, res) => {
+  
   const { phoneNumber, email, password } = req.body;
-  if (phoneNumber == undefined && email == undefined)
+  if (!phoneNumber  && !email)
     throw new customError(401, "PhoneNumber or Email Missing");
   // search db
-  const user = await userModel.findOne({ phoneNumber, email });
+  const user = await userModel.findOne({$or:[{ phoneNumber} , {email}] });
   if (!user) throw new customError(401, "user no Found / missing !!");
 
   // check password
@@ -192,15 +193,16 @@ exports.login = asyncHandler(async (req, res) => {
   if (!passwordRight)
     throw new customError(401, "Passoword or email incorrect");
   // generate accesToken and refresh Token
-  const accesToken = await user.generateAccesToken();
+  const accesToken = await user.generateAccessToken();
   const refreshToken = await user.generateRefreshToken();
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV == 'development' ? false : true,
-    sameSite: 'none',
+    // secure: process.env.NODE_ENV == 'development' ? false : true,
+    secure:false,
+    sameSite: 'lax',
     path: '/',
-    maxAge: 15 * 24 * 60 * 60 * 1000,
   });
+  apiResponse.sendSuccess(res, 200 ,'login sucessfull', {accesToken} )
 });
 
 // Logout

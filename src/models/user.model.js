@@ -112,7 +112,7 @@ userSchema.methods.comparePassword = async function (humanPass) {
 
 // generate access Token
 userSchema.methods.generateAccessToken = async function () {
-  const accessToken = await jwt.sign(
+  const accessToken =  jwt.sign(
     {
       userId: this._id,
       email: this.email,
@@ -126,8 +126,8 @@ userSchema.methods.generateAccessToken = async function () {
 };
 
 // generate refresh Token
-userSchema.methods.generateAccessToken = async function () {
-  return await jwt.sign(
+userSchema.methods.generateRefreshToken = async function () {
+  return  jwt.sign(
     {
       userId: this._id,
     },
@@ -138,7 +138,7 @@ userSchema.methods.generateAccessToken = async function () {
 
 // verify access token
 userSchema.methods.verifyAccessToken = async function (token) {
-  const isValidAccessToken = await jwt.verify(token, process.env.ACCESSTOKEN_SECRET);
+  const isValidAccessToken =  jwt.verify(token, process.env.ACCESSTOKEN_SECRET);
   if(!isValidAccessToken){
     throw new customError(401, "Your Token is Invalid")
   }
