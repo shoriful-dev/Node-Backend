@@ -1,11 +1,15 @@
-const { asyncHandler } = require('../../utils/asyncHandler');
-const { apiResponse } = require('../../utils/apiResponse');
-const { customError } = require('../../utils/customError');
-const { Otp, emailSend } = require('../helpers/nodemailer');
-const userModel = require('../models/user.model');
-const { registrationTemplate, resendOtpTemplate } = require('../template/emailtemplate');
-const { validateUser } = require('../validation/user.validation');
-const { sendSms } = require('../helpers/sms');
+const { asyncHandler } = require("../../utils/asyncHandler");
+const { apiResponse } = require("../../utils/apiResponse");
+const { customError } = require("../../utils/customError");
+const { Otp, emailSend } = require("../helpers/nodemailer");
+const jwt = require("jsonwebtoken");
+const userModel = require("../models/user.model");
+const {
+  registrationTemplate,
+  resendOtpTemplate,
+} = require("../template/emailtemplate");
+const { validateUser } = require("../validation/user.validation");
+const { sendSms } = require("../helpers/sms");
 
 exports.Registration = asyncHandler(async (req, res) => {
   const value = await validateUser(req);
@@ -18,7 +22,7 @@ exports.Registration = asyncHandler(async (req, res) => {
   }).save();
 
   if (!user) {
-    throw new customError(500, 'User not registerd server error!!');
+    throw new customError(500, "User not registerd server error!!");
   }
   // send confirm registration mail
   const otp = Otp();
@@ -35,9 +39,9 @@ exports.Registration = asyncHandler(async (req, res) => {
       verifyEmailLink
     );
     // now send email
-    const rejult = await emailSend(user.email, 'Verify Email 🥷🏼', templete);
+    const rejult = await emailSend(user.email, "Verify Email 🥷🏼", templete);
     if (!rejult) {
-      throw new customError(500, 'Email Send Faild');
+      throw new customError(500, "Email Send Faild");
     } else {
       const verifyEmailLink = `www.fontend.com/verify-account/${user.phoneNumber}`;
       const smsBody = `✅ Welcome to Node commerce, ${user.name}!
@@ -51,7 +55,7 @@ Need help? Contact us anytime.`;
   }
 
   await user.save();
-  apiResponse.sendSuccess(res, 201, 'Registration Successfull', {
+  apiResponse.sendSuccess(res, 201, "Registration Successfull", {
     name: user.name,
   });
 });
@@ -180,12 +184,11 @@ exports.resetPassowrd = asyncHandler(async (req, res) => {
 
 //login
 exports.login = asyncHandler(async (req, res) => {
-  
   const { phoneNumber, email, password } = req.body;
-  if (!phoneNumber  && !email)
+  if (!phoneNumber && !email)
     throw new customError(401, "PhoneNumber or Email Missing");
   // search db
-  const user = await userModel.findOne({$or:[{ phoneNumber} , {email}] });
+  const user = await userModel.findOne({ $or: [{ phoneNumber }, { email }] });
   if (!user) throw new customError(401, "user no Found / missing !!");
 
   // check password
@@ -195,14 +198,14 @@ exports.login = asyncHandler(async (req, res) => {
   // generate accesToken and refresh Token
   const accesToken = await user.generateAccessToken();
   const refreshToken = await user.generateRefreshToken();
-  res.cookie('refreshToken', refreshToken, {
+  res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     // secure: process.env.NODE_ENV == 'development' ? false : true,
-    secure:false,
-    sameSite: 'lax',
-    path: '/',
+    secure: false,
+    sameSite: "lax",
+    path: "/",
   });
-  apiResponse.sendSuccess(res, 200 ,'login sucessfull', {accesToken} )
+  apiResponse.sendSuccess(res, 200, "login sucessfull", { accesToken });
 });
 
 // Logout
@@ -222,4 +225,24 @@ exports.logout = asyncHandler(async (req, res) => {
   user.refreshToken = null;
   await user.save();
   apiResponse.sendSuccess(res, 200, "logout Sucesfull", { user });
+});
+
+// get token by refreshToken fn
+exports.refreshToken = asyncHandler(async (req, res) => {
+  const token = req.cookies.refreshToken;
+  let decode = null;
+  try {
+    decode = jwt.verify(token, process.env.REFRESHTOKEN_SECRET);
+  } catch (error) {
+    throw new customError(501, "refreshToken expired!!");
+  }
+
+  // // find the user
+  const user = await userModel.findById(decode.userId);
+
+  const newToken = await user.generateAccessToken();
+
+  apiResponse.sendSuccess(res, 200, "new token get Sucesfull", {
+    accesToken: newToken,
+  });
 });
