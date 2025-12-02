@@ -35,7 +35,9 @@ exports.createCategory = asyncHandler(async (req, res) => {
 
 // Get All Category
 exports.getAllCategory = asyncHandler(async (req, res) => {
-  const category = await CategoryModel.find().sort({ createdAt: -1 });
+  const category = await CategoryModel.find()
+    .populate("subCategory")
+    .sort({ createdAt: -1 });
   if (!category) throw new customError(500, "category not found");
   apiResponse.sendSuccess(res, 200, "category found", category);
 });

@@ -4,7 +4,9 @@ const jwt = require("jsonwebtoken");
 const { customError } = require("../../utils/customError");
 
 exports.authguard = async (req, res, next) => {
-  const accesToken = req?.headers?.authorization?.replace("Bearer ", " ").trim();
+  const accesToken = req?.headers?.authorization
+    ?.replace("Bearer ", " ")
+    .trim();
 
   try {
     if (!accesToken) {
@@ -12,7 +14,7 @@ exports.authguard = async (req, res, next) => {
     }
     let tokenValue;
     try {
-      tokenValue =  jwt.verify(accesToken, "da253bed35712e7a");
+      tokenValue = jwt.verify(accesToken, "da253bed35712e7a");
     } catch (err) {
       console.log(" tokenValue catch", err);
       throw new customError(410, "Token invalid or expired");
