@@ -39,6 +39,7 @@ exports.getAllCategory = asyncHandler(async (req, res) => {
     .populate("subCategory")
     .sort({ createdAt: -1 });
   if (!category) throw new customError(500, "category not found");
+
   apiResponse.sendSuccess(res, 200, "category found", category);
 });
 

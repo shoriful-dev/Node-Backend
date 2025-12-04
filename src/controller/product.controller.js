@@ -42,17 +42,51 @@ exports.createProduct = asyncHandler(async (req, res) => {
 });
 
 // get all product
-exports.getAllProduct = asyncHandler(async (_, res) => {
+exports.getAllProduct = asyncHandler(async (req, res) => {
+  const { ptype } = req.query;
+  let queryobj = {};
+  if (ptype == "single") {
+    queryobj.variantType = "singleVariant";
+  } else if (ptype == "multiple") {
+    queryobj.variantType = "multipleVariant";
+  } else {
+    queryobj = {};
+  }
+
   const allproduct = await productModel
-    .find({})
+    .find(queryobj)
     .populate({
       path: "category subCategory brand",
     })
+    .select("-QrCode -barCode")
     .sort({ createdAt: -1 });
   if (!allproduct?.length) {
     throw new customError(401, "Product not found !!");
   }
   apiResponse.sendSuccess(res, 201, "product created sucessfully", allproduct);
+});
+
+// get single product
+exports.getsingelProduct = asyncHandler(async (req, res) => {
+  const { slug } = req.query;
+  if (!slug) throw new customError(401, "slug not found !!");
+  console.log(slug);
+  const allproduct = await productModel
+    .findOne({ slug })
+    .populate({
+      path: "category subCategory brand",
+    })
+    .select("-QrCode -barCode")
+    .sort({ createdAt: -1 });
+  if (!allproduct) {
+    throw new customError(401, "Product not found !!");
+  }
+  apiResponse.sendSuccess(
+    res,
+    201,
+    "single product get sucessfully",
+    allproduct
+  );
 });
 
 // update product info

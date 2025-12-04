@@ -231,6 +231,8 @@ exports.logout = asyncHandler(async (req, res) => {
 exports.refreshToken = asyncHandler(async (req, res) => {
   const token = req.cookies.refreshToken;
   let decode = null;
+  console.log("refresh  token" , token);
+  
   try {
     decode = jwt.verify(token, process.env.REFRESHTOKEN_SECRET);
   } catch (error) {

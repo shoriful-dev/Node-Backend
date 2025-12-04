@@ -1,3 +1,4 @@
+require('dotenv').config()
 const { asyncHandler } = require("../../utils/asyncHandler");
 const userModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
@@ -7,14 +8,17 @@ exports.authguard = async (req, res, next) => {
   const accesToken = req?.headers?.authorization
     ?.replace("Bearer ", " ")
     .trim();
-
-  try {
-    if (!accesToken) {
+    
+    
+    try {
+      if (!accesToken) {
+    
       throw new customError(401, "No token provided!");
     }
     let tokenValue;
     try {
-      tokenValue = jwt.verify(accesToken, "da253bed35712e7a");
+      tokenValue = jwt.verify(accesToken, process.env.ACCESSTOKEN_SECRET);
+      console.log(tokenValue)
     } catch (err) {
       console.log(" tokenValue catch", err);
       throw new customError(410, "Token invalid or expired");

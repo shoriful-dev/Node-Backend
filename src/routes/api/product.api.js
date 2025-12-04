@@ -7,6 +7,7 @@ _.route("/create-product").post(
   productController.createProduct
 );
 _.route("/getall-product").get(productController.getAllProduct);
+_.route("/single-product").get(productController.getsingelProduct);
 _.route("/update-productinfo/:slug").put(productController.updateProductInfo);
 _.route("/upload-productimage/:slug").put(
   upload.fields([{ name: "image", maxCount: 10 }]),
