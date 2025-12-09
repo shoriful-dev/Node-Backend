@@ -10,6 +10,7 @@ const {
 } = require("../helpers/cloudinary");
 // create a varinat
 exports.createVariant = asyncHandler(async (req, res) => {
+
   const data = await validateVariant(req);
   //   upload cloudinary
   const imageUrl = await Promise.all(

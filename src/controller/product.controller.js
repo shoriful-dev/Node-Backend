@@ -13,16 +13,19 @@ const { generateQR, generateBarcode } = require("../helpers/Qrandbarcode");
 // create product
 exports.createProduct = asyncHandler(async (req, res) => {
   const data = await validateProduct(req);
-  const { image } = data;
-  //   upload image into cloudinary
-  let allImageinfo = [];
-  for (let img of image) {
-    const imginfo = await uploadCloudinaryFile(img.path);
-    allImageinfo.push(imginfo);
+   let allImageinfo = [];
+  if (data.variantType == "singleVariant") {
+    const { image } = data;
+    //   upload image into cloudinary
+    for (let img of image) {
+      const imginfo = await uploadCloudinaryFile(img.path);
+      allImageinfo.push(imginfo);
+    }
+
   }
 
   // update info into database
-  const product = await productModel.create({ ...data, image: allImageinfo });
+  const product = await productModel.create({ ...data, image: allImageinfo?.length>0 ? allImageinfo: null });
   if (!product) {
     throw new customError(500, "product created Failed !!");
   }
@@ -32,7 +35,10 @@ exports.createProduct = asyncHandler(async (req, res) => {
   //  make a qrCode
   const QrCode = await generateQR(QrCodeLink);
   //   make a barcode
-  const barCode = await generateBarcode(product.sku);
+  let barCode = null
+  if (data.variantType == "singleVariant") {
+    barCode = await generateBarcode(product.sku);
+  }
 
   //   now update the barcode and qrcode into db
   product.QrCode = QrCode;

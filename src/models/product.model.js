@@ -61,8 +61,7 @@ const productSchema = new mongoose.Schema(
     },
     shippingInformation: String,
     sku: {
-      type: String,
-      unique: true,
+      type: String,    
     },
     QrCode: String,
     barCode: String,

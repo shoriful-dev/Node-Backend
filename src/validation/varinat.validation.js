@@ -45,7 +45,7 @@ const variantValidationSchema = Joi.object(
 // ✅ Main Validation Function (with multi-image support)
 exports.validateVariant = async (req) => {
   try {
-    // Validate body
+
     const value = await variantValidationSchema.validateAsync(req.body);
 
     const acceptedMimeTypes = [
@@ -58,6 +58,7 @@ exports.validateVariant = async (req) => {
     const maxFileCount = 5; // Optional: Limit to 5 files
 
     const files = req?.files?.image;
+
 
     if (!files || files.length === 0) {
       throw new customError(400, "কমপক্ষে একটি ইমেজ আপলোড করতে হবে।");

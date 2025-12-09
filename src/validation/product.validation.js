@@ -26,7 +26,7 @@ const productValidationSchema = Joi.object({
     "Preorder"
   ),
   shippingInformation: Joi.string().allow("", null),
-  sku: Joi.string().required().messages({
+  sku: Joi.string().messages({
     "string.empty": "SKU is required.",
   }),
   QrCode: Joi.string().allow("", null),
@@ -71,8 +71,8 @@ const productValidationSchema = Joi.object({
 exports.validateProduct = async (req) => {
   try {
     const value = await productValidationSchema.validateAsync(req.body);
-
-    // Validate image files
+    if(value.variantType == "singleVariant") {
+ // Validate image files
     const acceptTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
 
     if (!req?.files?.image || req.files.image.length === 0) {
@@ -91,12 +91,21 @@ exports.validateProduct = async (req) => {
         throw new customError(400, "Each image must be under 5MB.");
       }
     }
-
-    return {
+     return {
       ...value,
-      image: req.files.image, // returning full image array
+      image: req.files.image || null, // returning full image array
     };
-  } catch (error) {
+
+    } else{
+       return {
+      ...value,
+      image: null, 
+    };
+    }
+
+   
+   
+  } catch (error) { 
     console.log("Error from validateProduct method:", error);
     throw new customError(
       401,
