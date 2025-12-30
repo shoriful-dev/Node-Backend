@@ -4,6 +4,7 @@ const cors = require("cors");
 const { globalErrorHandler } = require("../utils/globalErrorHandler");
 const { createServer } = require("http");
 const { initSocket } = require("./socket-io/server");
+const compression = require('compression')
 
 const app = express();
 const httpServer = createServer(app);
@@ -12,6 +13,7 @@ const httpServer = createServer(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(compression())
 app.use(cors(
     {
         origin:['http://localhost:5173'],

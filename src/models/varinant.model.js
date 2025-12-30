@@ -71,7 +71,7 @@ const variantSchema = new mongoose.Schema(
       min: 0,
     },
   },
-  { timestamps: true }
+  { timestamps: true ,toJSON: { virtuals: true } , toObject: { virtuals: true } }
 );
 
 // Generate slug before save
@@ -110,6 +110,11 @@ variantSchema.pre("findOneAndUpdate", function (next) {
   }
   next();
 });
+
+// get Sizes virtual data
+variantSchema.virtual("sizes").get(function(){
+  return  ['X' ,"S" ,"M" , "L" , "XXL" , "XL"]
+})
 
 module.exports =
   mongoose.models.Variant || mongoose.model("Variant", variantSchema);

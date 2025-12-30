@@ -62,7 +62,7 @@ exports.getAllProduct = asyncHandler(async (req, res) => {
   const allproduct = await productModel
     .find(queryobj)
     .populate({
-      path: "category subCategory brand",
+      path: "category subCategory brand variant",
     })
     .select("-QrCode -barCode")
     .sort({ createdAt: -1 });
@@ -80,7 +80,7 @@ exports.getsingelProduct = asyncHandler(async (req, res) => {
   const allproduct = await productModel
     .findOne({ slug })
     .populate({
-      path: "category subCategory brand",
+      path: "category subCategory brand variant",
     })
     .select("-QrCode -barCode")
     .sort({ createdAt: -1 });

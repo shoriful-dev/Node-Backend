@@ -112,7 +112,7 @@ const productSchema = new mongoose.Schema(
       min: 0,
     },
   },
-  { timestamps: true }
+  { timestamps: true ,toJSON: { virtuals: true } , toObject: { virtuals: true } }
 );
 
 // Generate slug before save
@@ -151,6 +151,11 @@ productSchema.pre("findOneAndUpdate", function (next) {
   }
   next();
 });
+
+// get Sizes virtual data
+productSchema.virtual("sizes").get(function(){
+  return  ['X' ,"S" ,"M" , "L" , "XXL" , "XL"]
+})
 
 module.exports =
   mongoose.models.Product || mongoose.model("Product", productSchema);

@@ -17,6 +17,7 @@
     "bcrypt": "^6.0.0",
     "bwip-js": "^4.7.0",
     "cloudinary": "^2.7.0",
+    "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",

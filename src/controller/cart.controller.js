@@ -5,6 +5,7 @@ const cartModel = require("../models/cart.model");
 const productModel = require("../models/product.model");
 const varinatModel = require("../models/varinant.model");
 const couponModel = require("../models/coupon.model");
+
 const { validateCartItemAction } = require("../validation/cart.validation");
 const { getIo } = require("../socket-io/server");
 
@@ -139,6 +140,22 @@ exports.addToCart = asyncHandler(async (req, res) => {
     data: null,
   });
   apiResponse.sendSuccess(res, 201, "add to cart sucessfully", cart);
+});
+
+// get cart by user
+exports.getCartbyUser = asyncHandler(async (req, res) => {
+  const { guestId , userId } = req.query;
+  if(!guestId && !userId) throw new customError(401 , "query paramas missing")
+  let query  = guestId ? {guestId} :{user:userId};
+  console.log("query" ,query);
+  const cart = await cartModel.findOne(query).populate({
+    path:"items.product",
+    select:"name _id  image color size retailPrice slug "
+  }).populate({
+    path:"items.variant"
+  })
+ apiResponse.sendSuccess(res,200, "fetch sucessfully" , cart) 
+ 
 });
 
 // apply coupon
