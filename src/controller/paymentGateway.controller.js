@@ -26,7 +26,7 @@ exports.sucess = asyncHandler(async (req, res) => {
     }
   );
 
-  apiResponse.sendSuccess(res, 200, "payment sucesfull", null);
+  res.redirect('http://localhost:5174/success')
 });
 
 exports.fail = asyncHandler(async (req, res) => {
@@ -46,6 +46,7 @@ exports.cancel = asyncHandler(async (req, res) => {
 });
 
 exports.ipn = asyncHandler(async (req, res) => {
+  
   res
     .status(301)
     .redirect(

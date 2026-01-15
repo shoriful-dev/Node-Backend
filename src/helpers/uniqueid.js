@@ -11,6 +11,7 @@ exports.getTransactionId = () => {
 exports.getProductName = (items) => {
   let allName = [];
   items.map((product) => {
+  
     if (product.variantType == "singleVariant") {
       allName.push(product.name);
     } else {

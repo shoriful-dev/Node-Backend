@@ -147,13 +147,15 @@ exports.getCartbyUser = asyncHandler(async (req, res) => {
   const { guestId , userId } = req.query;
   if(!guestId && !userId) throw new customError(401 , "query paramas missing")
   let query  = guestId ? {guestId} :{user:userId};
-  console.log("query" ,query);
   const cart = await cartModel.findOne(query).populate({
     path:"items.product",
     select:"name _id  image color size retailPrice slug "
   }).populate({
     path:"items.variant"
   })
+  if(!cart){
+ apiResponse.sendSuccess(res,200, "cart is Empty"  , cart)    
+  }
  apiResponse.sendSuccess(res,200, "fetch sucessfully" , cart) 
  
 });

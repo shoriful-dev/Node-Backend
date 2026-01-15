@@ -57,7 +57,7 @@ exports.createOrder = asyncHandler(async (req, res) => {
         return productModel.findOneAndUpdate({ _id: item.product }, updateFields, { new: true }).select("-QrCode -barCode -updatedAt -tag -reviews");
       } else {
         return variantModel.findOneAndUpdate(
-          { _id: item.product },
+          { _id: item.variant },
           {
             $inc: {
               stockVariant: -item.quantity,
@@ -69,6 +69,7 @@ exports.createOrder = asyncHandler(async (req, res) => {
       }
     })
   );
+
 
   // ---------------------------------------------------------------------------
   // Create Order Object
@@ -82,8 +83,6 @@ exports.createOrder = asyncHandler(async (req, res) => {
     coupon: cart.coupon,
     discountAmount: cart.discountAmount,
   });
-
- 
 
   // ---------------------------------------------------------------------------
   // Calculate Final Amount
@@ -159,10 +158,10 @@ exports.createOrder = asyncHandler(async (req, res) => {
       await order.save();
 
       // Optionally remove cart after successful payment initiation
-      // await cartModel.findByIdAndDelete({ _id: cart._id });
+      await cartModel.findByIdAndDelete({ _id: cart._id });
 
       console.log("SSLCommerz Response:", response);
-       apiResponse.sendSuccess(res,201, 'order sucessfull' , response.GatewayPageURL)
+       apiResponse.sendSuccess(res,203, 'order sucessfull' , response.GatewayPageURL)
       // return res.redirect(response.GatewayPageURL);
     } catch (error) {
       // Rollback stock and invoice if payment fails

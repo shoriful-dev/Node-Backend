@@ -5,7 +5,7 @@ module.exports = {
     try {
       io = new Server(httpServer, {
         cors: {
-          origin: "*",
+          origin:         ['http://localhost:5173','http://localhost:5174'],
         },
       });
 
