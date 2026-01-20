@@ -22,7 +22,8 @@ exports.sucess = asyncHandler(async (req, res) => {
   await orderModel.findOneAndUpdate(
     { transactionId: validatePayment.tran_id },
     { paymentStatus: validatePayment.status ? "VALID" : "success" , valId:validatePayment.val_id ,
-      paymentGatewayData: validatePayment
+      paymentGatewayData: validatePayment,
+      orderStatus: "Confrim"
     }
   );
 

@@ -37,8 +37,9 @@ const applyDeliveryCharge = async (deliveryChargeId) => {
 // Controller: Create Order
 // -----------------------------------------------------------------------------
 exports.createOrder = asyncHandler(async (req, res) => {
-  const { user, guestId, shippinfo, deliveryCharge, paymentMethod } = await validateOrder(req);
- 
+  const { user, guestId, shippinfo, deliveryCharge, paymentMethod } =
+    await validateOrder(req);
+
   const cartQuery = user ? { user } : { guestId };
   const cart = await cartModel.findOne(cartQuery);
 
@@ -54,7 +55,9 @@ exports.createOrder = asyncHandler(async (req, res) => {
       };
 
       if (item.product) {
-        return productModel.findOneAndUpdate({ _id: item.product }, updateFields, { new: true }).select("-QrCode -barCode -updatedAt -tag -reviews");
+        return productModel
+          .findOneAndUpdate({ _id: item.product }, updateFields, { new: true })
+          .select("-QrCode -barCode -updatedAt -tag -reviews");
       } else {
         return variantModel.findOneAndUpdate(
           { _id: item.variant },
@@ -64,12 +67,11 @@ exports.createOrder = asyncHandler(async (req, res) => {
               totalSale: item.quantity,
             },
           },
-          { new: true }
+          { new: true },
         );
       }
-    })
+    }),
   );
-
 
   // ---------------------------------------------------------------------------
   // Create Order Object
@@ -89,7 +91,8 @@ exports.createOrder = asyncHandler(async (req, res) => {
   // ---------------------------------------------------------------------------
   const charge = await applyDeliveryCharge(deliveryCharge);
   order.finalAmount =
-    Math.ceil(cart.totalAmountOfWholeProduct + charge.amount) - cart.discountAmount;
+    Math.ceil(cart.totalAmountOfWholeProduct + charge.amount) -
+    cart.discountAmount;
   order.deliveryZone = charge.name;
 
   // ---------------------------------------------------------------------------
@@ -109,13 +112,17 @@ exports.createOrder = asyncHandler(async (req, res) => {
   // Handle Payment Methods
   // ---------------------------------------------------------------------------
   if (paymentMethod === "cod") {
-
     order.paymentMethod = "cod";
     order.paymentStatus = "Pending";
     await order.save();
     // await cartModel.findByIdAndDelete({ _id: cart._id });
 
-     apiResponse.sendSuccess(res, 201, "Order created successfully (COD)", order);
+    apiResponse.sendSuccess(
+      res,
+      201,
+      "Order created successfully (COD)",
+      order,
+    );
   }
 
   if (paymentMethod === "online") {
@@ -161,7 +168,12 @@ exports.createOrder = asyncHandler(async (req, res) => {
       await cartModel.findByIdAndDelete({ _id: cart._id });
 
       console.log("SSLCommerz Response:", response);
-       apiResponse.sendSuccess(res,203, 'order sucessfull' , response.GatewayPageURL)
+      apiResponse.sendSuccess(
+        res,
+        203,
+        "order sucessfull",
+        response.GatewayPageURL,
+      );
       // return res.redirect(response.GatewayPageURL);
     } catch (error) {
       // Rollback stock and invoice if payment fails
@@ -169,13 +181,23 @@ exports.createOrder = asyncHandler(async (req, res) => {
         cart.items.map((item) => {
           const rollbackFields = item.product
             ? { $inc: { stock: item.quantity, totalSale: -item.quantity } }
-            : { $inc: { stockVariant: item.quantity, totalSale: -item.quantity } };
+            : {
+                $inc: {
+                  stockVariant: item.quantity,
+                  totalSale: -item.quantity,
+                },
+              };
 
-          return (item.product
-            ? productModel.findOneAndUpdate({ _id: item.product }, rollbackFields)
-            : variantModel.findOneAndUpdate({ _id: item.product }, rollbackFields)
-          );
-        })
+          return item.product
+            ? productModel.findOneAndUpdate(
+                { _id: item.product },
+                rollbackFields,
+              )
+            : variantModel.findOneAndUpdate(
+                { _id: item.product },
+                rollbackFields,
+              );
+        }),
       );
 
       await invoiceModel.findOneAndDelete({ invoiceId: order.invoiceId });
@@ -188,53 +210,87 @@ exports.createOrder = asyncHandler(async (req, res) => {
 // Controller: Get All Orders
 // -----------------------------------------------------------------------------
 exports.getAllOrders = asyncHandler(async (req, res) => {
-  let {phoneNumber} = req.query;
-  const orders = await orderModel.find(phoneNumber ? {  "shippinfo.phone": { $regex: phoneNumber, $options: "i" } } : {}).sort({ createdAt: -1 });
-  if (!orders || orders.length === 0) throw new customError(404, "No orders found");
+  let { phoneNumber , invoice } = req.query;
+
+  const orders = await orderModel
+    .find(
+      phoneNumber
+        ? { "shippinfo.phone": { $regex: phoneNumber, $options: "i" } }
+        : invoice ? {invoiceId: invoice}
+        : {}
+    )
+    .sort({ createdAt: -1 });
+  if (!orders || orders.length === 0)
+    throw new customError(404, "No orders found");
   apiResponse.sendSuccess(res, 200, "Orders retrieved successfully", orders);
 });
 
+// get order by order status
+exports.getOrdersByStatus = asyncHandler(async (req, res) => {
+  let { status } = req.query;
+  let query = {};
+  if (status == "Pending") {
+    query.orderStatus = status;
+  } else if (status == "Cancel") {
+    query.orderStatus = status;
+  } else if (status == "courierPending") {
+    query.orderStatus = status;
+  }else{
+    query = {};
+  }
+  const orders = await orderModel
+    .find(
+    query)
+    .sort({ createdAt: -1 });
+  if (!orders || orders.length === 0)
+    throw new customError(404, "No orders found");
+  apiResponse.sendSuccess(res, 200, "Orders retrieved successfully", orders);
+});
 
 // get all orderStatus
 exports.getAllOrdersStatus = asyncHandler(async (req, res) => {
-const orderstatus = await orderModel.aggregate([
-  {
-    $group: {
-      _id: "$orderStatus",
-      count: { $sum: 1 },
+  const orderstatus = await orderModel.aggregate([
+    {
+      $group: {
+        _id: "$orderStatus",
+        count: { $sum: 1 },
+      },
     },
-  },
-  {
-    $group: {
-      _id: null,
-      totalOrders: { $sum: "$count" },
-      breakdown: {
-        $push: {
-          orderStatus: "$_id",
-          count: "$count",
+    {
+      $group: {
+        _id: null,
+        totalOrders: { $sum: "$count" },
+        breakdown: {
+          $push: {
+            orderStatus: "$_id",
+            count: "$count",
+          },
         },
       },
     },
-  },
-  {
-    $project: {
-      _id: 0,
-      totalOrders: 1,
-      breakdown: 1,
+    {
+      $project: {
+        _id: 0,
+        totalOrders: 1,
+        breakdown: 1,
+      },
     },
-  },
-]);
+  ]);
 
-  apiResponse.sendSuccess(res, 200, "Orders retrieved successfully", orderstatus);
+  apiResponse.sendSuccess(
+    res,
+    200,
+    "Orders retrieved successfully",
+    orderstatus,
+  );
 });
-
 
 // -----------------------------------------------------------------------------
 // UPDATE ORDER BY ID
 // -----------------------------------------------------------------------------
 exports.updateOrderById = asyncHandler(async (req, res) => {
-  const { id } = req.params; 
-  const {status} = req.body; 
+  const { id } = req.params;
+  const { status } = req.body;
 
   // Validate ID
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -243,12 +299,11 @@ exports.updateOrderById = asyncHandler(async (req, res) => {
 
   // Perform update
   const updatedOrder = await orderModel.findOneAndUpdate(
-    {_id:id},
-    { orderStatus: status},
-    {new:true}
-   
+    { _id: id },
+    { orderStatus: status },
+    { new: true },
   );
- 
+
   if (!updatedOrder) throw new customError(404, "Order not found");
 
   apiResponse.sendSuccess(res, 200, "Order updated successfully", updatedOrder);
@@ -257,16 +312,15 @@ exports.updateOrderById = asyncHandler(async (req, res) => {
 // qurier pending
 
 exports.courierPending = asyncHandler(async (req, res) => {
- 
   // Perform update
-  const updatedOrder = await orderModel.find(
-    { orderStatus: "CourierPending"},
-  
-  );
- 
+  const updatedOrder = await orderModel.find({ orderStatus: "CourierPending" });
+
   if (!updatedOrder) throw new customError(404, "Order not found");
 
-  apiResponse.sendSuccess(res, 200, "courier pending successfully", updatedOrder);
+  apiResponse.sendSuccess(
+    res,
+    200,
+    "courier pending successfully",
+    updatedOrder,
+  );
 });
-
-
