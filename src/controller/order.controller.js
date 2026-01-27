@@ -228,6 +228,7 @@ exports.getAllOrders = asyncHandler(async (req, res) => {
 // get order by order status
 exports.getOrdersByStatus = asyncHandler(async (req, res) => {
   let { status } = req.query;
+  console.log(req.query);
   let query = {};
   if (status == "Pending") {
     query.orderStatus = status;
@@ -235,7 +236,9 @@ exports.getOrdersByStatus = asyncHandler(async (req, res) => {
     query.orderStatus = status;
   } else if (status == "courierPending") {
     query.orderStatus = status;
-  }else{
+  } else if (status == "Processing") {
+    query.orderStatus = status;
+  } else {
     query = {};
   }
   const orders = await orderModel
