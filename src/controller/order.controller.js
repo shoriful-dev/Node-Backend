@@ -327,3 +327,21 @@ exports.courierPending = asyncHandler(async (req, res) => {
     updatedOrder,
   );
 });
+
+// sucess Courier order
+exports.courierSucess = asyncHandler(async (req, res) => {
+  // Perform update
+  const updatedOrder = await orderModel.find({
+    "courier.name": { $exists: true, $ne: null },
+  });
+
+
+  if (!updatedOrder) throw new customError(404, "Order not found");
+
+  apiResponse.sendSuccess(
+    res,
+    200,
+    "courier pending successfully",
+    updatedOrder,
+  );
+});

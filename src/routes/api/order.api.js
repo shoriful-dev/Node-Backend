@@ -7,5 +7,6 @@ _.route("/getorderbystatus").get(orderController.getOrdersByStatus);
 _.route('/orderStatus').get(orderController.getAllOrdersStatus)
 _.route('/orderupdate/:id').put(orderController.updateOrderById);
 _.route('/courierpending').get(orderController.courierPending);
+_.route("/couriersucess").get(orderController.courierSucess);
 
 module.exports = _
