@@ -18,7 +18,7 @@ const userSchema = new Schema(
     password: {
       type: String,
       trim: true,
-      required: [true, 'Password Missing'],
+      required: [true, "Password Missing"],
     },
     phoneNumber: {
       type: Number,
@@ -32,11 +32,11 @@ const userSchema = new Schema(
     phoneNumberVerified: Boolean,
     role: {
       type: Types.ObjectId,
-      role: 'Role',
+      role: "Role",
     },
     permission: {
       type: Types.ObjectId,
-      role: 'Permission',
+      role: "Permission",
     },
     address: {
       type: String,
@@ -47,7 +47,7 @@ const userSchema = new Schema(
     country: {
       type: String,
       trim: true,
-      default: 'Bangladesh',
+      default: "Bangladesh",
     },
     zipCode: {
       type: Number,
@@ -57,17 +57,17 @@ const userSchema = new Schema(
     gender: {
       type: String,
       trim: true,
-      enum: ['male', 'female', 'custom'],
+      enum: ["male", "female", "custom"],
     },
     cart: {
       type: Types.ObjectId,
       trim: true,
-      ref: 'Product',
+      ref: "Product",
     },
     wishList: {
       type: Types.ObjectId,
       trim: true,
-      ref: 'Product',
+      ref: "Product",
     },
     newsLetterSubscribe: Boolean,
     resetPasswordOtp: Number,
@@ -91,10 +91,20 @@ const userSchema = new Schema(
     lastlogout: Date,
     oAuth: Boolean,
     refreshToken: String,
+    roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Role" }],
+    permissions: [
+      {
+        permission: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Permission",
+        },
+        actions: [{ type: String }],
+      },
+    ],
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // hash password before saving

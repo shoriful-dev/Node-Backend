@@ -10,6 +10,11 @@ class apiResponse {
       .status(statusCode)
       .json(new apiResponse(statusCode, message, data));
   }
+  static sendError(res, statusCode, message, error = null) {
+    return res
+      .status(statusCode)
+      .json(new apiResponse(statusCode, message, error));
+  }
 }
 
 module.exports = { apiResponse };
