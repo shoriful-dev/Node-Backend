@@ -7,11 +7,6 @@ const permissionSchema = new Schema({
         required: true,
         trim: true  
     },
-    actions:[{
-        type: String,
-        enum: ['create', 'read', 'update', 'delete']
-       
-    }],
     slug:{
         type: String,
         unique: true,

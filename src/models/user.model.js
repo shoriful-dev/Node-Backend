@@ -101,6 +101,7 @@ const userSchema = new Schema(
         actions: [{ type: String }],
       },
     ],
+    
   },
   {
     timestamps: true,
@@ -116,8 +117,9 @@ userSchema.pre('save', async function (next) {
 });
 
 // compare hash password
-userSchema.methods.comparePassword = async function (humanPass) {
-  return await bcrypt.compare(humanPass, this.password);
+userSchema.methods.comparePassword = async function (plainpass) {
+  return await bcrypt.compare(plainpass, this.password);
+  
 };
 
 // generate access Token

@@ -2,7 +2,10 @@ const express = require("express");
 const _ = express.Router();
 const brandController = require("../../controller/brand.controller");
 const upload = require("../../middleware/multer.middleware");
+const { authguard } = require("../../middleware/authGuard.middleware");
+
 _.route("/create-brand").post(
+  authguard,
   upload.fields([{ name: "image", maxCount: 1 }]),
   brandController.createBrand
 );

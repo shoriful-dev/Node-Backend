@@ -9,10 +9,8 @@ exports.authguard = async (req, res, next) => {
     ?.replace("Bearer ", " ")
     .trim();
     
-    
     try {
       if (!accesToken) {
-    
       throw new customError(401, "No token provided!");
     }
     let tokenValue;
@@ -28,7 +26,8 @@ exports.authguard = async (req, res, next) => {
     if (!userinfo) throw new customError(401, "User not found!");
 
     req.user = userinfo;
-    next();
+    console.log(req.user)
+    // next();
   } catch (error) {
     console.log(error);
     next(error); // send error to your global error handler

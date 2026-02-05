@@ -7,25 +7,21 @@ const PermissionArr = ["Brand" , "Category", "Product", "Order", "User" , "SubCa
 // connected to database
 ConnectDatabase()
   .then(() => {
-    console.log("Seeding Db Connected Successfully");
-   seedPermissions().then(() => {
-      console.log("Seeding Completed");
-      process.exit(0);
-    });
+    console.log("Delete Db Connected Successfully");
+   deleteAllPermission().then(() => {
+     console.log("Delete Completed");
+     process.exit(0);
+   });
   })
   .catch((err) => {
-    console.log("Seeding Db Connection Failed", err);
+    console.log("Delete Db Connection Failed", err);
     process.exit(0);
   });
 
 // seeding permissions
-const seedPermissions = async () => {
+const deleteAllPermission = async () => {
   try {
-    for (const permissionName of PermissionArr) {
-      const newPermission = new permissonModel({ name: permissionName  });
-      console.log(`New Permission Create Sucessfully`, newPermission.name);
-      await newPermission.save();
-    }
+     await permissonModel.deleteMany();
   } catch (error) {
     console.error("Error seeding permissions:", error);
   }

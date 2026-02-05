@@ -193,6 +193,8 @@ exports.login = asyncHandler(async (req, res) => {
 
   // check password
   const passwordRight = await user.comparePassword(password);
+  console.log(passwordRight)
+  return
   if (!passwordRight)
     throw new customError(401, "Passoword or email incorrect");
   // generate accesToken and refresh Token
