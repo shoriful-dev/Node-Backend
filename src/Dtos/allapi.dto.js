@@ -20,8 +20,9 @@ const userDTO = (doc) => ({
 
 const permissionDTO = (doc)=> {
   return {
+    _id: doc._id,
     name: doc.name,
-    createdAt:doc.createdAt,
+    createdAt: doc.createdAt,
     slug: doc.slug,
   };
 }

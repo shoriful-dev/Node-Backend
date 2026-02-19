@@ -47,6 +47,7 @@ exports.deletePermission = asyncHandler(async (req, res) => {
 // -------------> add user permisison controller
 exports.addUserPermission = asyncHandler(async (req, res) => {
   const { user, permissionList } = req.body;
+
   if (!user && !permissionList.length) {
     throw new customError(401, "data need");
   }

@@ -117,9 +117,8 @@ userSchema.pre('save', async function (next) {
 });
 
 // compare hash password
-userSchema.methods.comparePassword = async function (plainpass) {
-  return await bcrypt.compare(plainpass, this.password);
-  
+userSchema.methods.comparePassword = async function (plainpass , haspassword) {
+  return await bcrypt.compare(plainpass, haspassword);
 };
 
 // generate access Token

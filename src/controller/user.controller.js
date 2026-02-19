@@ -188,13 +188,13 @@ exports.login = asyncHandler(async (req, res) => {
   if (!phoneNumber && !email)
     throw new customError(401, "PhoneNumber or Email Missing");
   // search db
-  const user = await userModel.findOne({ $or: [{ phoneNumber }, { email }] });
+  const user = await userModel.findOne( {phoneNumber} , {email});
   if (!user) throw new customError(401, "user no Found / missing !!");
 
   // check password
-  const passwordRight = await user.comparePassword(password);
-  console.log(passwordRight)
-  return
+  const passwordRight = await user.comparePassword(password ,user.password);
+  console.log(passwordRight);
+return
   if (!passwordRight)
     throw new customError(401, "Passoword or email incorrect");
   // generate accesToken and refresh Token

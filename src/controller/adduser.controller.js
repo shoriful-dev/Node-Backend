@@ -35,19 +35,17 @@ exports.getAllUsers = asyncHandler(async (req, res) => {
   } else {
     filter.roles = { $exists: true, $type: "array", $not: { $size: 0 } };
   }
-  const users = await userModel.find(filter).populate({
-    path: "roles",
-  });
+  const users = await userModel
+    .find(filter)
+    .populate({
+      path: "roles",
+    })
+    .select(" -permissions -createdAt   -password -__v");
   if (!users || users.length === 0) {
     apiResponse.sendError(res, 404, "No users found");
     return;
   }
-  apiResponse.sendSuccess(
-    res,
-    200,
-    "Users fetched successfully",
-    users.map((user) => userDTO(user)),
-  );
+  apiResponse.sendSuccess(res, 200, "Users fetched successfully", users);
 });
 
 // @desc soft delete user by id
