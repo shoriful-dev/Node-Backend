@@ -3,6 +3,7 @@ const { apiResponse } = require("../../utils/apiResponse");
 const { customError } = require("../../utils/customError");
 const { Otp, emailSend } = require("../helpers/nodemailer");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const userModel = require("../models/user.model");
 const {
   registrationTemplate,
@@ -36,7 +37,7 @@ exports.Registration = asyncHandler(async (req, res) => {
       user.email,
       otp,
       expireTime,
-      verifyEmailLink
+      verifyEmailLink,
     );
     // now send email
     const rejult = await emailSend(user.email, "Verify Email 🥷🏼", templete);
@@ -101,7 +102,7 @@ exports.verifyUser = asyncHandler(async (req, res) => {
     res,
     200,
     "Your Otp matched ,  your acount Verified",
-    { name: validUser.name }
+    { name: validUser.name },
   );
 });
 
@@ -138,7 +139,7 @@ Need help?
     res,
     200,
     "Your Otp Send Sucesfully Check your email or phone",
-    null
+    null,
   );
 });
 
@@ -150,13 +151,13 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
   if (!user)
     throw new customError(
       401,
-      "This email not Registred first Regitration our application"
+      "This email not Registred first Regitration our application",
     );
   // now send a email
   return res
     .status(301)
     .redirect(
-      "https://www.udemy.com/course/complete-ai-guide/?couponCode=taufik.cit.bd@gmail.com"
+      "https://www.udemy.com/course/complete-ai-guide/?couponCode=taufik.cit.bd@gmail.com",
     );
 });
 
@@ -170,7 +171,7 @@ exports.resetPassowrd = asyncHandler(async (req, res) => {
   if (!pattern.test(newPassword))
     throw new customError(
       401,
-      "পাসওয়ার্ডে অন্তত ১টি বড় হাতের অক্ষর, ১টি নাম্বার এবং ১টি স্পেশাল ক্যারেক্টার থাকতে হবে এবং সর্বনিম্ন ৮ অক্ষরের হতে হবে।"
+      "পাসওয়ার্ডে অন্তত ১টি বড় হাতের অক্ষর, ১টি নাম্বার এবং ১টি স্পেশাল ক্যারেক্টার থাকতে হবে এবং সর্বনিম্ন ৮ অক্ষরের হতে হবে।",
     );
 
   if (newPassword !== confrimPassword)
@@ -188,18 +189,21 @@ exports.login = asyncHandler(async (req, res) => {
   if (!phoneNumber && !email)
     throw new customError(401, "PhoneNumber or Email Missing");
   // search db
-  const user = await userModel.findOne( {phoneNumber} , {email});
-  if (!user) throw new customError(401, "user no Found / missing !!");
+  let query = {};
+  if (phoneNumber) {
+    query.phoneNumber = phoneNumber;
+  } else {
+    query.email = email;
+  }
+  const findUser = await userModel.findOne(query);
+  if (!findUser) throw new customError(401, "user no Found / missing !!");
 
-  // check password
-  const passwordRight = await user.comparePassword(password ,user.password);
-  console.log(passwordRight);
-return
+  const passwordRight = await bcrypt.compare(password, findUser.password);
   if (!passwordRight)
     throw new customError(401, "Passoword or email incorrect");
   // generate accesToken and refresh Token
-  const accesToken = await user.generateAccessToken();
-  const refreshToken = await user.generateRefreshToken();
+  const accesToken = await findUser.generateAccessToken();
+  const refreshToken = await findUser.generateRefreshToken();
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     // secure: process.env.NODE_ENV == 'development' ? false : true,
@@ -233,8 +237,8 @@ exports.logout = asyncHandler(async (req, res) => {
 exports.refreshToken = asyncHandler(async (req, res) => {
   const token = req.cookies.refreshToken;
   let decode = null;
-  console.log("refresh  token" , token);
-  
+  console.log("refresh  token", token);
+
   try {
     decode = jwt.verify(token, process.env.REFRESHTOKEN_SECRET);
   } catch (error) {

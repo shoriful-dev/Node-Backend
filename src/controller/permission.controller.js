@@ -3,7 +3,11 @@ const { apiResponse } = require("../../utils/apiResponse");
 const { customError } = require("../../utils/customError");
 const permissionModel = require("../models/permission.model");
 const userModel = require("../models/user.model");
-const { getAllPermissonDTO, permissionDTO, userDTO } = require("../Dtos/allapi.dto");
+const {
+  getAllPermissonDTO,
+  permissionDTO,
+  userDTO,
+} = require("../Dtos/allapi.dto");
 
 // Create Permission
 exports.createPermission = asyncHandler(async (req, res) => {
@@ -53,8 +57,9 @@ exports.addUserPermission = asyncHandler(async (req, res) => {
   }
   // find the user
   const userData = await userModel.findOne({ _id: user });
+
   userData.permissions = permissionList;
-  await userData.save()
-  // console.log(userDTO(userData));
-  apiResponse.sendSuccess(res,200,'permisson assign sucessfully' , userDTO(userData))
+  await userData.save();
+
+  apiResponse.sendSuccess(res, 200, "permisson assign sucessfully", userData);
 });
