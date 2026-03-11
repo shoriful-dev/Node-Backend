@@ -8,7 +8,8 @@
     "start": "nodemon index.js",
     "socket": "node src/socket-io/client.js",
     "dev": "node index.js",
-    "seed": "node src/seeder/seeder.js"
+    "seed": "node src/seeder/seeder.js",
+    "seed:test": "node src/seeder/admin.js"
   },
   "keywords": [],
   "author": "",
