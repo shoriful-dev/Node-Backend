@@ -7,11 +7,11 @@ const { authrorize } = require("../../middleware/authorize.middleware");
 
 _.route("/create-category").post(
   authguard,
-  authrorize("add"),
+  authrorize("category:create"),
   upload.fields([{ name: "image", maxCount: 1 }]),
   categoryController.createCategory,
 );
-_.route("/getAll-category").get(authguard, categoryController.getAllCategory);
+_.route("/getAll-category").get(categoryController.getAllCategory);
 _.route("/singleCategory/:slug").get(categoryController.singleCategory);
 _.route("/update-category/:slug").put(
   upload.fields([{ name: "image", maxCount: 1 }]),
