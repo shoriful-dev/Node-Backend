@@ -8,9 +8,7 @@
     "start": "nodemon index.js",
     "socket": "node src/socket-io/client.js",
     "dev": "node index.js",
-    "seed:role": "node src/seeder/seeder.js",
-    "seed:permission": "node src/seeder/permission.seeder.js",
-    "delete:permission": "node src/seeder/removepermisson.js"
+    "seed": "node src/seeder/seeder.js"
   },
   "keywords": [],
   "author": "",
