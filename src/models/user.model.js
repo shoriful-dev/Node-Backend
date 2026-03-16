@@ -111,7 +111,6 @@ userSchema.methods.generateAccessToken = async function () {
       userId: this._id,
       email: this.email,
       name: this.name,
-      role: this.role,
     },
     process.env.ACCESSTOKEN_SECRET,
     { expiresIn: process.env.ACCESSTOKEN_EXPIRES },

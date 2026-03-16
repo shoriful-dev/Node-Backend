@@ -22,10 +22,7 @@ exports.authguard = async (req, res, next) => {
       throw new customError(410, "Token invalid or expired");
     }
 
-    const userinfo = await userModel
-      .findById(tokenValue.userId)
-      .populate("roles")
-      .populate("permissions");
+    const userinfo = await userModel.findById(tokenValue.userId);
     if (!userinfo) throw new customError(401, "User not found!");
 
     req.user = userinfo;

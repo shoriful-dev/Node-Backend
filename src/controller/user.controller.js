@@ -195,7 +195,13 @@ exports.login = asyncHandler(async (req, res) => {
   } else {
     query.email = email;
   }
-  const findUser = await userModel.findOne(query);
+  const findUser = await userModel.findOne(query).populate({
+    path: "roles",
+    populate: {
+      path: "permissions",
+      select: "-_id name",
+    },
+  });
   if (!findUser) throw new customError(401, "user no Found / missing !!");
 
   const passwordRight = await bcrypt.compare(password, findUser.password);
@@ -211,7 +217,14 @@ exports.login = asyncHandler(async (req, res) => {
     sameSite: "lax",
     path: "/",
   });
-  apiResponse.sendSuccess(res, 200, "login sucessfull", { accesToken });
+  const userRoles = findUser.roles
+    .flatMap((p) => p.permissions)
+    .map(({ name }) => name);
+
+  apiResponse.sendSuccess(res, 200, "login sucessfull", {
+    accesToken,
+    userRoles,
+  });
 });
 
 // Logout
